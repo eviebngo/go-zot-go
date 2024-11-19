@@ -8,9 +8,15 @@ import json
 
 from geopy import distance
 
+import urllib.request
+'''
 custom_routes_path = Path("../db/custom_routes.json")
 
 reviews_path = Path("../db/reviews.json")
+'''
+custom_routes_path = Path(__file__).parent.parent/"db/custom_routes.json"
+
+reviews_path = Path(__file__).parent.parent/"db/reviews.json"
 
 app = FastAPI()
 
@@ -61,4 +67,13 @@ async def read_reviews(custom: bool, id: str | int) -> JSONResponse:
         return JSONResponse(file_list)
     return JSONResponse({"Error": "File not found"})
 
-
+@app.get("/maps_autocomplete")
+async def get_map_autocomplete(key: str, input: str) -> JSONResponse:
+    """
+    Returns all autocomplete searches
+    """
+    try:
+        request = urllib.request.urlopen(f"https://maps.googleapis.com/maps/api/place/autocomplete/json?key={key}&input={input}")
+        return request.read().decode(encoding="utf-8")
+    except (urllib.error.URLError, urllib.error.HTTPError, ValueError) as error:
+        return JSONResponse({"Error":error})
