@@ -9,6 +9,10 @@ import { getCustomReviews } from "./api_functions/reviews";
 function App() {
   const [count, setCount] = useState(0);
 
+  // Some test runs of API functions in frontend
+  getCustomRoutes(34.056365083876415, -118.23400411024693);
+  getCustomReviews(1);
+
   return (
     <>
       <div>
