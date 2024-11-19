@@ -1,0 +1,30 @@
+{
+  "custom_routes": [
+    {
+      "id": 1,
+      "origin": "UCI",
+      "destination": "Los Angeles Union Station",
+      "destination_lat": 34.056281794151374,
+      "destination_lon": -118.23649137502154,
+      "route": [
+        {
+          "to": "Tustin Station",
+          "from": "UCI",
+          "mode": "Car",
+          "type": "Uber",
+          "duration": "15m",
+          "cost": 11.0
+        },
+        {
+          "to": "Los Angeles Union Station",
+          "from": "Tustin Station",
+          "mode": "Train",
+          "type": "Metrolink",
+          "duration": "1hr 10m",
+          "cost": 0.0
+        }
+      ],
+      "time": "2024-11-07T20:11:00"
+    }
+  ]
+}
