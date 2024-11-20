@@ -13,8 +13,8 @@ function App() {
   // Some test runs of API functions in frontend
   getCustomRoutes(34.056365083876415, -118.23400411024693);
   getCustomReviews(1);
-  getMapsAutocomplete()
-  getMapsRoute()
+  getMapsAutocomplete("irvine")
+  getMapsRoute("Irvine, CA", "Los Angeles, CA")
 
   return (
     <>

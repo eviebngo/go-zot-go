@@ -89,9 +89,14 @@ async def get_map_autocomplete(input: str) -> JSONResponse:
 
 
 @app.get("/maps_route")
-async def get_map_route(origin: str,destination: str) -> JSONResponse:
+async def get_map_route(origin: str, destination: str, alternatives: bool = True) -> JSONResponse:
     '''
     Returns best Google Maps route
     '''
-    route = gmaps.directions(origin,destination)
-    return route
+    # route = gmaps.directions(origin,destination) 
+    # return route
+    try:
+        request = urllib.request.urlopen(f"https://maps.googleapis.com/maps/api/directions/json?destination={destination}&origin={origin}&alternatives={alternatives}&key={os.environ['VITE_MAPS_API_KEY']}")
+        return request.read().decode(encoding="utf-8")
+    except (urllib.error.URLError, urllib.error.HTTPError, ValueError) as error:
+        return JSONResponse({"Error":error})
