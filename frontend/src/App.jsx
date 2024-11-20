@@ -5,7 +5,7 @@ import "./App.css";
 
 import { getCustomRoutes } from "./api_functions/routes";
 import { getCustomReviews } from "./api_functions/reviews";
-import { getMapsAutocomplete } from "./api_functions/maps"
+import { getMapsAutocomplete, getMapsRoute } from "./api_functions/maps"
 
 function App() {
   const [count, setCount] = useState(0);
@@ -14,6 +14,7 @@ function App() {
   getCustomRoutes(34.056365083876415, -118.23400411024693);
   getCustomReviews(1);
   getMapsAutocomplete()
+  getMapsRoute()
 
   return (
     <>

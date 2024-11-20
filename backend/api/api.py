@@ -5,10 +5,14 @@ from fastapi.responses import JSONResponse
 from typing import TypedDict
 from pathlib import Path
 import json
+import os
 
 from geopy import distance
 
 import urllib.request
+
+import googlemaps
+
 '''
 custom_routes_path = Path("../db/custom_routes.json")
 
@@ -34,6 +38,7 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+gmaps = googlemaps.Client(key=os.environ['VITE_MAPS_API_KEY'])
 
 @app.get("/", tags=["root"])
 async def read_root() -> dict:
@@ -68,12 +73,25 @@ async def read_reviews(custom: bool, id: str | int) -> JSONResponse:
     return JSONResponse({"Error": "File not found"})
 
 @app.get("/maps_autocomplete")
-async def get_map_autocomplete(key: str, input: str) -> JSONResponse:
-    """
-    Returns all autocomplete searches
-    """
+async def get_map_autocomplete(input: str) -> JSONResponse:
+    '''
+    Returns all predicted autocomplete searches on Google Maps
+    {
+        "description": string
+        "place_id": string
+    }
+    '''
     try:
-        request = urllib.request.urlopen(f"https://maps.googleapis.com/maps/api/place/autocomplete/json?key={key}&input={input}")
+        request = urllib.request.urlopen(f"https://maps.googleapis.com/maps/api/place/autocomplete/json?key={os.getenv('VITE_MAPS_API_KEY')}&input={input}")
         return request.read().decode(encoding="utf-8")
     except (urllib.error.URLError, urllib.error.HTTPError, ValueError) as error:
         return JSONResponse({"Error":error})
+
+
+@app.get("/maps_route")
+async def get_map_route(origin: str,destination: str) -> JSONResponse:
+    '''
+    Returns best Google Maps route
+    '''
+    route = gmaps.directions(origin,destination)
+    return route
