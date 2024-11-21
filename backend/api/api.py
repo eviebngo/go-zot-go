@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -6,10 +6,12 @@ from typing import TypedDict
 from pathlib import Path
 import json
 import os
+from datetime import datetime
 
 from geopy import distance
 
 import urllib.request
+import urllib.parse
 
 import googlemaps
 
@@ -56,6 +58,27 @@ async def read_custom_routes(to_lat: float, to_lon: float) -> JSONResponse:
         return JSONResponse(file_list)
     return JSONResponse({"Error": "File not found"})
 
+
+@app.post("/custom_routes")
+async def post_custom_route(destination_lat: float = Form(), destination_lon: float = Form(), destination: str = Form(), route: list[dict] = Form()) -> JSONResponse:
+    date = datetime.now()
+    file = json.load(open(custom_routes_path))
+    id = file["custom_routes"][-1]["id"]
+    new_custom_route = {
+        "id": id,
+        "origin": "UCI",
+        "destination": destination,
+        "destination_lat": destination_lat,
+        "destination_lon": destination_lon,
+        "route": route,
+        "time": date.isoformat(timespec="seconds")
+    }
+    file["custom_routes"].append(new_custom_route)
+    with open(custom_routes_path, "w") as f:
+        json.dump(file,f)
+    
+    return JSONResponse({"Success": status.HTTP_200_OK})
+
 @app.get("/reviews")
 async def read_reviews(custom: bool, id: str | int) -> JSONResponse:
     """
@@ -76,11 +99,8 @@ async def read_reviews(custom: bool, id: str | int) -> JSONResponse:
 async def get_map_autocomplete(input: str) -> JSONResponse:
     '''
     Returns all predicted autocomplete searches on Google Maps
-    {
-        "description": string
-        "place_id": string
-    }
     '''
+    input = urllib.parse.quote(input)
     try:
         request = urllib.request.urlopen(f"https://maps.googleapis.com/maps/api/place/autocomplete/json?key={os.getenv('VITE_MAPS_API_KEY')}&input={input}")
         return request.read().decode(encoding="utf-8")
@@ -89,14 +109,17 @@ async def get_map_autocomplete(input: str) -> JSONResponse:
 
 
 @app.get("/maps_route")
-async def get_map_route(origin: str, destination: str, alternatives: bool = True) -> JSONResponse:
+async def get_map_route(origin: str, destination: str) -> JSONResponse:
     '''
     Returns best Google Maps route
     '''
     # route = gmaps.directions(origin,destination) 
     # return route
+    origin = urllib.parse.quote(origin)
+    destination = urllib.parse.quote(destination)
+    print("origin, destination",origin,destination)
     try:
-        request = urllib.request.urlopen(f"https://maps.googleapis.com/maps/api/directions/json?destination={destination}&origin={origin}&alternatives={alternatives}&key={os.environ['VITE_MAPS_API_KEY']}")
+        request = urllib.request.urlopen(f"https://maps.googleapis.com/maps/api/directions/json?destination={destination}&origin={origin}&alternatives=true&key={os.environ['VITE_MAPS_API_KEY']}")
         return request.read().decode(encoding="utf-8")
     except (urllib.error.URLError, urllib.error.HTTPError, ValueError) as error:
         return JSONResponse({"Error":error})
