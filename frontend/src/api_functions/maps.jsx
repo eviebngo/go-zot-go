@@ -1,4 +1,5 @@
 import axios from "axios";
+import { decode } from "@googlemaps/polyline-codec";
 
 /**
  * Gets all predicted autocomplete entries for a search query
@@ -69,6 +70,14 @@ export const getMapsRoute = (origin, destination) => {
       destination: destination
     })
 
+    const decodePolyline = (polyline) => {
+        let result = []
+        for (let point of decode(polyline)) {
+          result.push({lat:point[0],lng:point[1]})
+        }
+        return result
+      }
+
     axios
         .get(`/api/maps_route?`+parameters.toString())
         .then((res) => {
@@ -105,7 +114,7 @@ export const getMapsRoute = (origin, destination) => {
                         "legs": legs
                     })
                 }
-            } 
+            }
             console.log(routes)
             return routes
         })
