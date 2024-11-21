@@ -117,6 +117,7 @@ async def get_map_route(origin: str, destination: str) -> JSONResponse:
     # return route
     origin = urllib.parse.quote(origin)
     destination = urllib.parse.quote(destination)
+    print("origin, destination",origin,destination)
     try:
         request = urllib.request.urlopen(f"https://maps.googleapis.com/maps/api/directions/json?destination={destination}&origin={origin}&alternatives=true&key={os.environ['VITE_MAPS_API_KEY']}")
         return request.read().decode(encoding="utf-8")

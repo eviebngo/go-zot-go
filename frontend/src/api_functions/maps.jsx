@@ -22,12 +22,13 @@ export const getMapsAutocomplete = (search_query) => {
                     "place_id":pred["place_id"]
                 })
             }
+            console.log(predictions)
+            return predictions
         }
     })
     .catch((error) => {
         console.log(error)
     })
-  return predictions
 }
 
 /**
@@ -63,8 +64,6 @@ export const getMapsAutocomplete = (search_query) => {
  */
 export const getMapsRoute = (origin, destination) => {
 
-    let routes = { "routes": [] }
-
     const parameters = new URLSearchParams({
       origin: origin,
       destination: destination
@@ -74,8 +73,8 @@ export const getMapsRoute = (origin, destination) => {
         .get(`/api/maps_route?`+parameters.toString())
         .then((res) => {
             let data = JSON.parse(res.data)
-            
-            if (data["status"] == "ok") {
+            let routes = { "routes": [] }
+            if (data["status"] == "OK") {
                 for (let route of data["routes"]) {
                     let legs = []
                     for (let leg of route["legs"]) {
@@ -107,9 +106,10 @@ export const getMapsRoute = (origin, destination) => {
                     })
                 }
             } 
+            console.log(routes)
+            return routes
         })
         .catch((error) => {
-                console.log(error)
+            console.log(error)
         })
-    return routes
 }

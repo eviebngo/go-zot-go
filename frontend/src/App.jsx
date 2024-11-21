@@ -7,6 +7,8 @@ import { getCustomRoutes } from "./api_functions/routes";
 import { getCustomReviews } from "./api_functions/reviews";
 import { getMapsAutocomplete, getMapsRoute } from "./api_functions/maps"
 
+import { GoogleMaps } from "./pages/GoogleMaps"
+
 function App() {
   const [count, setCount] = useState(0);
 
@@ -20,8 +22,8 @@ function App() {
     key: import.meta.env.VITE_MAPS_API_KEY
   })
 
-  return (
-    <>
+  /*return (
+    <div>
       <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
@@ -42,16 +44,10 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
-      <iframe
-        width="450"
-        height="250"
-        style={{"border":"0"}}
-        referrerPolicy="no-referrer-when-downgrade"
-        src={"https://www.google.com/maps/embed/v1/MAP_MODE?"+parameters}
-        allowFullScreen>
-        </iframe>
-    </>
-  );
+      <GoogleMaps/>
+    </div>
+  );*/
+  return <GoogleMaps/>
 }
 
 export default App;
