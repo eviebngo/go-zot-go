@@ -1,0 +1,136 @@
+/* Sidebar styling */
+.sidebar {
+  padding: 20px;
+  background-color: #f8f9fa;
+  height: 100%;
+}
+
+/* Search Bar */
+.search-bar {
+  display: flex; /* Align items horizontally */
+  align-items: center; /* Vertically center items */
+  gap: 10px; /* Add space between menu button and search bar */
+  margin-bottom: 20px; /* Spacing below the search bar */
+  width: 1100px;
+}
+
+.menu-btn {
+  font-size: 5rem; /* Icon size */
+  background: none; /* Remove default button styling */
+  border: none;
+  cursor: pointer;
+  padding: 8px; /* Add padding for better clickability */
+  z-index: 1000; /* Ensure it appears above other elements */
+}
+
+.search-bar input {
+  flex: 1; /* Make the input take the remaining horizontal space */
+  padding: 20px; /* Padding inside the input */
+  border-radius: 50px; /* Rounded corners */
+  border: 1px solid #ccc; /* Border around input */
+  margin-top: 20px;
+}
+
+/* Suggestions */
+/* Suggestions Buttons */
+.suggestion {
+  display: flex;
+  width: 90%; /* Make the button smaller than the full sidebar width */
+  padding: 50px; /* Padding for better clickability */
+  font-size: 1.2rem; /* Font size for readability */
+  text-align: left; /* Align text to the left */
+  border: 1px solid #ccc; /* Light border for better definition */
+  border-radius: 10px; /* Rounded corners for modern design */
+  background-color: #ffffff; /* White background */
+  cursor: pointer; /* Pointer cursor for hover */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effects */
+  margin: 0 auto; /* Center the button horizontally */
+  margin-bottom: 20px;
+}
+
+.suggestion:hover {
+  background-color: #e9ecef; /* Light gray background on hover */
+  transform: scale(1.03); /* Slight enlargement on hover */
+}
+
+.suggestion.active {
+  background-color: #0064A4; /* Blue background for active state */
+  color: white; /* White text for contrast */
+  transform: scale(1.05); /* Slightly larger size for active state */
+}
+
+/* Dropdown Content */
+.stop-content {
+  margin-top: 5px;
+  padding: 15px;
+  background-color: #f1f1f1;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+  color: #333;
+  width: 90%; /* Match button width */
+  margin: 0 auto; /* Center the dropdown content */
+  animation: dropdown 0.3s ease-out;
+  margin-bottom: 20px;
+}
+
+/* Dropdown Animation */
+@keyframes dropdown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Menu Bar */
+.menu-bar {
+  position: fixed;
+  top: 0;
+  left: -300px; /* Initially hidden */
+  width: 300px;
+  height: 100%;
+  background-color: #f2f2f2;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  z-index: 900; /* Ensure it stays behind the menu button */
+  transition: left 0.3s ease;
+}
+
+.menu-bar.open {
+  left: 0; /* Slide in when open */
+}
+
+.menu-bar h2 {
+  text-align: center;
+  margin-top: 0;
+}
+
+.menu-item {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.menu-item img {
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+}
+
+.menu-item img:hover {
+  transform: scale(1.1); /* Slight zoom on hover */
+}
+
+/* Close Menu Button */
+.close-menu-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 20px;
+  z-index: 1001; /* Ensure it appears above the menu */
+}
