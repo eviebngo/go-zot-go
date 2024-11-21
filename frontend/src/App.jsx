@@ -16,7 +16,7 @@ function App() {
   getCustomRoutes(34.056365083876415, -118.23400411024693);
   getCustomReviews(1);
   getMapsAutocomplete("irvine")
-  getMapsRoute("Irvine, CA", "Los Angeles, CA","","","")
+  getMapsRoute("Irvine, CA", "Los Angeles, CA","transit","","")
   return (
     <div className="app">
       {/* Sidebar */}

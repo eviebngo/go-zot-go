@@ -111,7 +111,7 @@ async def get_map_autocomplete(input: str) -> JSONResponse:
                     "description":pred["description"],
                     "place_id":pred["place_id"]
                 })
-        return predictions
+        return json.dumps(predictions)
     except (urllib.error.URLError, urllib.error.HTTPError, ValueError) as error:
         return JSONResponse({"Error":error})
 
