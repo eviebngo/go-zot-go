@@ -4,6 +4,8 @@
       "id": 1,
       "origin": "UCI",
       "destination": "Los Angeles Union Station",
+      "origin_lat": 33.64375160614494,
+      "origin_lon": -117.83951226813289,
       "destination_lat": 34.056281794151374,
       "destination_lon": -118.23649137502154,
       "route": [
@@ -24,7 +26,8 @@
           "cost": 0.0
         }
       ],
-      "time": "2024-11-07T20:11:00"
+      "time": "2024-11-07T20:11:00",
+      "upvotes": 0
     }
   ]
 }

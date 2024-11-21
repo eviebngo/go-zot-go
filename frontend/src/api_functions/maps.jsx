@@ -1,8 +1,8 @@
-import axios from 'axios'
+import axios from "axios";
 
 /**
  * Gets all predicted autocomplete entries for a search query
- * @param {string} search_query 
+ * @param {string} search_query
  * @returns {JSON} each prediction has a "description" and "place_id" key
  */
 export const getMapsAutocomplete = (search_query) => {
@@ -11,7 +11,7 @@ export const getMapsAutocomplete = (search_query) => {
   })
   let predictions = { "predictions": [] } 
   axios
-    .get(`/api/maps_autocomplete?`+parameters.toString())
+    .get(`/api/maps_autocomplete?` + parameters.toString())
     .then((res) => {
         let data = JSON.parse(res.data)
         
@@ -32,9 +32,9 @@ export const getMapsAutocomplete = (search_query) => {
 
 /**
  * Gets all possible routes from origin to destination
- * @param {string} origin 
- * @param {string} destination 
- * @returns {JSON} 
+ * @param {string} origin
+ * @param {string} destination
+ * @returns {JSON}
  *  overview_polyline (DirectionsPolyline): encoded polyline of all the points on a route
  *  bounds: lat and lng in degrees for northeast and southwest bounds to adjust Google Maps viewbox
  *  legs (Array<DirectionsLeg>): leg for each destination specified
