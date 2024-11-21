@@ -16,6 +16,10 @@ function App() {
   getMapsAutocomplete("irvine")
   getMapsRoute("Irvine, CA", "Los Angeles, CA")
 
+  const parameters = new URLSearchParams({
+    key: import.meta.env.VITE_MAPS_API_KEY
+  })
+
   return (
     <>
       <div>
@@ -38,6 +42,14 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+      <iframe
+        width="450"
+        height="250"
+        style={{"border":"0"}}
+        referrerPolicy="no-referrer-when-downgrade"
+        src={"https://www.google.com/maps/embed/v1/MAP_MODE?"+parameters}
+        allowFullScreen>
+        </iframe>
     </>
   );
 }

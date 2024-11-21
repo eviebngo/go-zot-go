@@ -9,23 +9,25 @@ export const getMapsAutocomplete = (search_query) => {
   const parameters = new URLSearchParams({
     input: search_query
   })
+  let predictions = { "predictions": [] } 
   axios
     .get(`/api/maps_autocomplete?`+parameters.toString())
     .then((res) => {
-        let predictions = { "predictions": [] }
-        if (res.data["status"] == "ok") {
-            for (let pred of res.data["predictions"]) {
+        let data = JSON.parse(res.data)
+        
+        if (data["status"] == "OK") {
+            for (let pred of data["predictions"]) {
                 predictions["predictions"].push({
                     "description":pred["description"],
                     "place_id":pred["place_id"]
                 })
             }
-        } 
-        return predictions
+        }
     })
     .catch((error) => {
         console.log(error)
     })
+  return predictions
 }
 
 /**
@@ -60,35 +62,54 @@ export const getMapsAutocomplete = (search_query) => {
  *  TravelMode: DRIVING (default), BICYCLING, TRANSIT, WALKING
  */
 export const getMapsRoute = (origin, destination) => {
+
+    let routes = { "routes": [] }
+
     const parameters = new URLSearchParams({
       origin: origin,
       destination: destination
     })
+
     axios
-      .get(`/api/maps_route?`+parameters.toString())
-      .then((res) => {
-        let routes = { "routes": [] }
-        if (res.data["status"] == "ok") {
-            for (let route of res.data["routes"]) {
-                routes["routes"].push({
-                    "overview_polyline":route["overview_polyline"], 
-                    "bounds":route["bounds"],
-                    "legs": {
-                        "end_address": route["legs"]["end_address"],
-                        "end_location": route["legs"]["end_location"],
-                        "start_address": route["legs"]["start_address"],
-                        "start_location": route["legs"]["start_location"],
-                        "steps": [
-                            
-                        ],
+        .get(`/api/maps_route?`+parameters.toString())
+        .then((res) => {
+            let data = JSON.parse(res.data)
+            
+            if (data["status"] == "ok") {
+                for (let route of data["routes"]) {
+                    let legs = []
+                    for (let leg of route["legs"]) {
+                        let steps = []
+                        for (let step of leg["steps"]) {
+                            steps.push({
+                                "duration": step["duration"],
+                                "end_location": step["end_location"],
+                                "polyline": step["polyline"],
+                                "start_location": step["start_location"],
+                                "travel_mode": step["travel_mode"]
+                            })
+                        }
+                        legs.push({
+                            "end_address": leg["end_address"],
+                            "end_location": leg["end_location"],
+                            "start_address": leg["start_address"],
+                            "start_location": leg["start_location"],
+                            "steps": steps,
+                            "distance": leg["distance"],
+                            "duration": leg["duration"]
+                        })
                     }
-                })
-            }
-        } 
-        console.log(res.data)
-        return routes
-      })
-      .catch((error) => {
-          console.log(error)
-      })
-  }
+
+                    routes["routes"].push({
+                        "overview_polyline":route["overview_polyline"], 
+                        "bounds":route["bounds"],
+                        "legs": legs
+                    })
+                }
+            } 
+        })
+        .catch((error) => {
+                console.log(error)
+        })
+    return routes
+}
