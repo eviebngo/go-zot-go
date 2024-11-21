@@ -3,8 +3,9 @@ import "./Sidebar.css";
 import "@fortawesome/fontawesome-free/css/all.css";
 
 const Sidebar = () => {
-  const [activeStop, setActiveStop] = useState(null);
+  const [activeStop, setActiveStop] = useState(null); // For stops
   const [menuOpen, setMenuOpen] = useState(false); // State for the menu
+  const [selectedIcons, setSelectedIcons] = useState([]); // For multiple active transportation icons
 
   // Toggle active stop
   const toggleStop = (stop) => {
@@ -16,6 +17,17 @@ const Sidebar = () => {
     setMenuOpen(!menuOpen);
   };
 
+  // Handle icon click
+  const toggleIcon = (iconName) => {
+    if (selectedIcons.includes(iconName)) {
+      // Remove the icon if it's already selected
+      setSelectedIcons(selectedIcons.filter((icon) => icon !== iconName));
+    } else {
+      // Add the icon if it's not selected
+      setSelectedIcons([...selectedIcons, iconName]);
+    }
+  };
+
   return (
     <>
       {/* Menu Bar */}
@@ -24,29 +36,57 @@ const Sidebar = () => {
           &times;
         </span>
         <h2>Transportation Types</h2>
-        <div className="menu-item">
+
+        <div
+          className={`menu-item ${
+            selectedIcons.includes("walking") ? "active-icon" : ""
+          }`}
+          onClick={() => toggleIcon("walking")}
+        >
           <img
             src="https://img.icons8.com/ios-filled/100/null/walking.png"
             alt="Walking"
           />
+          <span className="menu-label">Walking</span>
         </div>
-        <div className="menu-item">
+
+        <div
+          className={`menu-item ${
+            selectedIcons.includes("train") ? "active-icon" : ""
+          }`}
+          onClick={() => toggleIcon("train")}
+        >
           <img
             src="https://img.icons8.com/ios-filled/100/null/train.png"
             alt="Train"
           />
+          <span className="menu-label">Train</span>
         </div>
-        <div className="menu-item">
+
+        <div
+          className={`menu-item ${
+            selectedIcons.includes("bus") ? "active-icon" : ""
+          }`}
+          onClick={() => toggleIcon("bus")}
+        >
           <img
             src="https://img.icons8.com/ios-filled/100/null/bus.png"
             alt="Bus"
           />
+          <span className="menu-label">Bus</span>
         </div>
-        <div className="menu-item">
+
+        <div
+          className={`menu-item ${
+            selectedIcons.includes("car") ? "active-icon" : ""
+          }`}
+          onClick={() => toggleIcon("car")}
+        >
           <img
             src="https://img.icons8.com/ios-filled/100/null/car.png"
             alt="Car"
           />
+          <span className="menu-label">Car</span>
         </div>
       </div>
 

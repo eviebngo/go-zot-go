@@ -16,11 +16,6 @@
     left: 0;
   }
   
-  .menu-bar h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
   /* Grid Layout for Buttons */
   .menu-grid {
     display: grid;
@@ -55,3 +50,10 @@
     transform: scale(1.05); /* Slight enlargement on hover */
   }
   
+  .custom-heading {
+    color: #0C2340 !important;
+  }
+
+  h2 {
+    color: initial; /* Removes inherited global styles */
+  }
