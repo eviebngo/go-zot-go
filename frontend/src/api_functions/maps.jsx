@@ -16,7 +16,7 @@ export const getMapsAutocomplete = (search_query) => {
     .then((res) => {
         let data = JSON.parse(res.data)
         
-        if (data["status"] == "OK") {
+        /*if (data["status"] == "OK") {
             for (let pred of data["predictions"]) {
                 predictions["predictions"].push({
                     "description":pred["description"],
@@ -25,7 +25,9 @@ export const getMapsAutocomplete = (search_query) => {
             }
             console.log(predictions)
             return predictions
-        }
+        }*/
+       console.log(data)
+       return data
     })
     .catch((error) => {
         console.log(error)
@@ -36,6 +38,9 @@ export const getMapsAutocomplete = (search_query) => {
  * Gets all possible routes from origin to destination
  * @param {string} origin
  * @param {string} destination
+ * @param {string} mode driving (default), walking, bicycling, transit
+ * @param {string} arrival_time
+ * @param {string} departure_time
  * @returns {JSON}
  *  overview_polyline (DirectionsPolyline): encoded polyline of all the points on a route
  *  bounds: lat and lng in degrees for northeast and southwest bounds to adjust Google Maps viewbox
@@ -63,26 +68,21 @@ export const getMapsAutocomplete = (search_query) => {
  *
  *  TravelMode: DRIVING (default), BICYCLING, TRANSIT, WALKING
  */
-export const getMapsRoute = (origin, destination) => {
+export const getMapsRoute = (origin, destination, mode, arrival_time, departure_time) => {
 
     const parameters = new URLSearchParams({
       origin: origin,
-      destination: destination
+      destination: destination,
+      mode: mode,
+      arrival_time: arrival_time,
+      departure_time: departure_time
     })
-
-    const decodePolyline = (polyline) => {
-        let result = []
-        for (let point of decode(polyline)) {
-          result.push({lat:point[0],lng:point[1]})
-        }
-        return result
-      }
 
     axios
         .get(`/api/maps_route?`+parameters.toString())
         .then((res) => {
             let data = JSON.parse(res.data)
-            let routes = { "routes": [] }
+            /*let routes = { "routes": [] }
             if (data["status"] == "OK") {
                 for (let route of data["routes"]) {
                     let legs = []
@@ -114,9 +114,9 @@ export const getMapsRoute = (origin, destination) => {
                         "legs": legs
                     })
                 }
-            }
-            console.log(routes)
-            return routes
+            }*/
+            console.log(data)
+            return data
         })
         .catch((error) => {
             console.log(error)
