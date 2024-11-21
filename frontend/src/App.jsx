@@ -1,12 +1,22 @@
-import React from "react";
+import React, {useState} from "react";
 import Sidebar from "./components/Sidebar";
 import "./App.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
+import {getCustomRoutes} from "./api_functions/routes"
+import {getCustomReviews} from "./api_functions/reviews"
+import {getMapsAutocomplete,getMapsRoute} from "./api_functions/maps"
 
 import { GoogleMaps } from "./pages/GoogleMaps"
 
 function App() {
+  const [count, setCount] = useState(0);
+
+  // Some test runs of API functions in frontend
+  getCustomRoutes(34.056365083876415, -118.23400411024693);
+  getCustomReviews(1);
+  getMapsAutocomplete("irvine")
+  getMapsRoute("Irvine, CA", "Los Angeles, CA")
   return (
     <div className="app">
       {/* Sidebar */}
@@ -25,30 +35,10 @@ function App() {
           allowFullScreen
           loading="lazy"
         ></iframe>
-  const [count, setCount] = useState(0);
-
-  // Some test runs of API functions in frontend
-  getCustomRoutes(34.056365083876415, -118.23400411024693);
-  getCustomReviews(1);
-  getMapsAutocomplete("irvine")
-  getMapsRoute("Irvine, CA", "Los Angeles, CA")
-
-  const parameters = new URLSearchParams({
-    key: import.meta.env.VITE_MAPS_API_KEY
-  })
-
-  /*return (
-    <div>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
+      
     </div>
-  );
+    </div>
+  )
 }
 
-export default App;
+export default App
