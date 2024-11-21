@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./Sidebar.css";
 import "@fortawesome/fontawesome-free/css/all.css";
+import { PlaceSearch } from "./PlaceSearch";
 
 const Sidebar = () => {
   const [activeStop, setActiveStop] = useState(null); // For stops
@@ -97,7 +98,7 @@ const Sidebar = () => {
           <button className="menu-btn" onClick={toggleMenu}>
             ☰
           </button>
-          <input type="text" placeholder="Search" />
+          <PlaceSearch />
         </div>
 
         {/* Suggestions */}
