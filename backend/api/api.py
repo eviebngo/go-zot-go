@@ -103,13 +103,21 @@ async def get_map_autocomplete(input: str) -> JSONResponse:
     input = urllib.parse.quote(input)
     try:
         request = urllib.request.urlopen(f"https://maps.googleapis.com/maps/api/place/autocomplete/json?key={os.getenv('VITE_MAPS_API_KEY')}&input={input}")
-        return request.read().decode(encoding="utf-8")
+        data = json.loads(request.read().decode(encoding="utf-8"))
+        predictions = { "predictions": [] } 
+        if data["status"] == "OK":
+            for pred in data["predictions"]:
+                predictions["predictions"].append({
+                    "description":pred["description"],
+                    "place_id":pred["place_id"]
+                })
+        return predictions
     except (urllib.error.URLError, urllib.error.HTTPError, ValueError) as error:
         return JSONResponse({"Error":error})
 
 
 @app.get("/maps_route")
-async def get_map_route(origin: str, destination: str) -> JSONResponse:
+async def get_map_route(origin: str, destination: str, mode: str, arrival_time: str, departure_time: str) -> JSONResponse:
     '''
     Returns best Google Maps route
     '''
@@ -119,7 +127,42 @@ async def get_map_route(origin: str, destination: str) -> JSONResponse:
     destination = urllib.parse.quote(destination)
     print("origin, destination",origin,destination)
     try:
-        request = urllib.request.urlopen(f"https://maps.googleapis.com/maps/api/directions/json?destination={destination}&origin={origin}&alternatives=true&key={os.environ['VITE_MAPS_API_KEY']}")
-        return request.read().decode(encoding="utf-8")
+        request = urllib.request.urlopen(f"https://maps.googleapis.com/maps/api/directions/json?destination={destination}&origin={origin}&alternatives=true&mode={mode}&arrival_time={arrival_time}&departure_time={departure_time}&key={os.environ['VITE_MAPS_API_KEY']}")
+        data = json.loads(request.read().decode(encoding="utf-8"))
+        routes = {"routes":[]}
+        if data["status"] == "OK":
+            for route in data["routes"]:
+                legs = []
+                for leg in route["legs"]:
+                    steps = []
+                    for step in leg["steps"]:
+                        steps.append({
+                            "duration": step["duration"],
+                            "end_location": step["end_location"],
+                            "polyline": step["polyline"],
+                            "start_location": step["start_location"],
+                            "travel_mode": step["travel_mode"]
+                        })
+                    legs.append({
+                        "end_address": leg["end_address"],
+                        "end_location": leg["end_location"],
+                        "start_address": leg["start_address"],
+                        "start_location": leg["start_location"],
+                        "steps": steps,
+                        "distance": leg["distance"],
+                        "duration": leg["duration"]
+                    })
+                overview_polyline = ""
+                for char in route["overview_polyline"]["points"]:
+                    if char in ['\\', '"', "'", '\n', '\t', '\r']:
+                        overview_polyline += '\\' + char
+                    else:
+                        overview_polyline += char
+                routes["routes"].append({
+                    "overview_polyline":overview_polyline, 
+                    "bounds":route["bounds"],
+                    "legs": legs
+                })
+        return json.dumps(routes)
     except (urllib.error.URLError, urllib.error.HTTPError, ValueError) as error:
         return JSONResponse({"Error":error})
