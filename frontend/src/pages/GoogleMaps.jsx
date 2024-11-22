@@ -3,12 +3,57 @@ import {
   GoogleMap,
   useJsApiLoader,
   Polyline,
-  InfoWindow,
 } from "@react-google-maps/api";
 import { decode } from "@googlemaps/polyline-codec";
 import Sidebar from "../components/Sidebar";
+import axios from "axios";
 
 export const GoogleMaps = (props) => {
+
+  const [routes, setRoutes] = useState([])
+  const [predictions, setPredictions] = useState([])
+
+  const getMapsAutocomplete = (search_query) => {
+    const parameters = new URLSearchParams({
+      input: search_query
+    })
+    axios
+      .get(`/api/maps_autocomplete?` + parameters.toString())
+      .then((res) => {
+        let data = JSON.parse(res.data)
+        setPredictions(data["predictions"])
+        //console.log(predictions)
+      })
+      .catch((error) => {
+          console.log(error)
+      })
+  }
+
+  const getMapsRoute = (origin, destination, mode, arrival_time, departure_time) => {
+
+    const parameters = new URLSearchParams({
+      origin: origin,
+      destination: destination,
+      mode: mode,
+      arrival_time: arrival_time,
+      departure_time: departure_time
+    })
+
+    axios
+        .get(`/api/maps_route?`+parameters.toString())
+        .then((res) => {
+            let data = JSON.parse(res.data)
+            setRoutes(data["routes"])
+            //console.log(routes)
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+  }
+  //getMapsAutocomplete("irvine");
+  //getMapsRoute("Irvine, CA", "Los Angeles, CA", "", "", "");
+  
+
   const decodePolyline = (polyline) => {
     let result = [];
     for (let point of decode(polyline)) {
@@ -95,10 +140,14 @@ export const GoogleMaps = (props) => {
           center={center}
           zoom={zoom}
         >
-          <Polyline
-            path={path}
-            options={{ strokeColor: "#4285f4", strokeWeight: 5 }}
-          />
+          {
+            routes.map((route,index) => {
+              return <Polyline
+                path={decodePolyline(route["overview_polyline"])}
+                options={{ strokeColor: "#4285f4", strokeWeight: 5 }}
+              />
+            })
+          }
           <Sidebar />
         </GoogleMap>
       </div>

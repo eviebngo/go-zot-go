@@ -174,10 +174,11 @@ async def get_map_route(origin: str, destination: str, mode: str, arrival_time: 
                     })
                 overview_polyline = ""
                 for char in route["overview_polyline"]["points"]:
-                    if char in ['\\', '"', "'", '\n', '\t', '\r']:
-                        overview_polyline += '\\' + char
-                    else:
-                        overview_polyline += char
+                    # if char in ['\\', '"', "'", '\n', '\t', '\r']:
+                    #     overview_polyline += '\\' + char
+                    # else:
+                    #     overview_polyline += char
+                    overview_polyline += char
                 routes["routes"].append({
                     "overview_polyline":overview_polyline, 
                     "bounds":route["bounds"],

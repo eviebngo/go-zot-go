@@ -1,5 +1,4 @@
 import axios from "axios";
-import { decode } from "@googlemaps/polyline-codec";
 
 /**
  * Gets all predicted autocomplete entries for a search query
@@ -10,7 +9,7 @@ export const getMapsAutocomplete = (search_query) => {
   const parameters = new URLSearchParams({
     input: search_query
   })
-  let predictions = { "predictions": [] } 
+  //let predictions = { "predictions": [] } 
   axios
     .get(`/api/maps_autocomplete?` + parameters.toString())
     .then((res) => {
@@ -26,7 +25,7 @@ export const getMapsAutocomplete = (search_query) => {
             console.log(predictions)
             return predictions
         }*/
-       console.log(data)
+       //console.log(data)
        return data
     })
     .catch((error) => {
@@ -115,7 +114,7 @@ export const getMapsRoute = (origin, destination, mode, arrival_time, departure_
                     })
                 }
             }*/
-            console.log(data)
+            //console.log(data)
             return data
         })
         .catch((error) => {
