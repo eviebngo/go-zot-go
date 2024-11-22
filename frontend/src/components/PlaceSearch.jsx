@@ -29,6 +29,10 @@ export const PlaceSearch = (props) => {
           map.panTo(latLng);
           map.setZoom(18);
         }
+        props.setLoc({
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng(),
+        });
       }}
     />
   ) : (

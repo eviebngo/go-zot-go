@@ -1,33 +1,28 @@
 import React, { useState, useEffect } from "react";
-import {
-  GoogleMap,
-  useJsApiLoader,
-  Polyline,
-} from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, Polyline } from "@react-google-maps/api";
 import { decode } from "@googlemaps/polyline-codec";
 import Sidebar from "../components/Sidebar";
 import axios from "axios";
 
 export const GoogleMaps = (props) => {
-
-  const [routes, setRoutes] = useState([])
-  const [predictions, setPredictions] = useState([])
+  const [routes, setRoutes] = useState([]);
+  const [predictions, setPredictions] = useState([]);
 
   const getMapsAutocomplete = (search_query) => {
     const parameters = new URLSearchParams({
-      input: search_query
-    })
+      input: search_query,
+    });
     axios
       .get(`/api/maps_autocomplete?` + parameters.toString())
       .then((res) => {
-        let data = JSON.parse(res.data)
-        setPredictions(data["predictions"])
+        let data = JSON.parse(res.data);
+        setPredictions(data["predictions"]);
         //console.log(predictions)
       })
       .catch((error) => {
-          console.log(error)
-      })
-  }
+        console.log(error);
+      });
+  };
 
   const getMapsRoute = (origin, destination, mode, departure_time) => {
     /**
@@ -42,23 +37,22 @@ export const GoogleMaps = (props) => {
       origin: origin,
       destination: destination,
       mode: mode,
-      departure_time: departure_time
-    })
+      departure_time: departure_time,
+    });
 
     axios
-        .get(`/api/maps_route?`+parameters.toString())
-        .then((res) => {
-            let data = JSON.parse(res.data)
-            setRoutes(data["routes"])
-            console.log(routes)
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-  }
+      .get(`/api/maps_route?` + parameters.toString())
+      .then((res) => {
+        let data = JSON.parse(res.data);
+        setRoutes(data["routes"]);
+        console.log(routes);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   //getMapsAutocomplete("irvine");
   //getMapsRoute("Irvine, CA", "Los Angeles, CA", "", "", "");
-  
 
   const decodePolyline = (polyline) => {
     let result = [];
@@ -147,15 +141,15 @@ export const GoogleMaps = (props) => {
           center={center}
           zoom={zoom}
         >
-          {
-            routes.map((route,index) => {
-              return <Polyline
+          {routes.map((route, index) => {
+            return (
+              <Polyline
                 path={decodePolyline(route["overview_polyline"])}
                 options={{ strokeColor: "#4285f4", strokeWeight: 5 }}
               />
-            })
-          }
-          <Sidebar />
+            );
+          })}
+          <Sidebar setLoc={props.setLoc} fetchRoutes={props.fetchRoutes} />
         </GoogleMap>
       </div>
     </div>

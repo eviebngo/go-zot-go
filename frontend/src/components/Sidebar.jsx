@@ -98,8 +98,10 @@ const Sidebar = (props) => {
           <button className="menu-btn" onClick={toggleMenu}>
             ☰
           </button>
-          <PlaceSearch />
-          <button className="secondary-button">Go!</button>
+          <PlaceSearch setLoc={props.setLoc} />
+          <button className="secondary-button" onClick={props.fetchRoutes}>
+            Go!
+          </button>
         </div>
 
         {/* Suggestions */}
