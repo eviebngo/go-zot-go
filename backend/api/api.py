@@ -15,6 +15,8 @@ import urllib.parse
 
 import googlemaps
 
+import datetime
+
 '''
 custom_routes_path = Path("../db/custom_routes.json")
 
@@ -158,6 +160,20 @@ async def get_map_autocomplete(input: str) -> JSONResponse:
 async def get_map_route(origin: str, destination: str, mode: str, arrival_time: str, departure_time: str) -> JSONResponse:
     '''
     Returns best Google Maps route
+    Output format:
+    {
+        "routes": [
+            "overview_polyline": encoded polyline string
+            "bounds": 
+            "steps": [
+                "to": string
+                "polyline": encoded polyline string
+                "from": string
+                "mode": string in caps
+            ]
+            "duration": string (human readable; in format "x days y hr z min")
+        ]
+    }
     '''
     # route = gmaps.directions(origin,destination) 
     # return route
@@ -169,17 +185,30 @@ async def get_map_route(origin: str, destination: str, mode: str, arrival_time: 
         data = json.loads(request.read().decode(encoding="utf-8"))
         routes = {"routes":[]}
         if data["status"] == "OK":
+            # Unformatted
             for route in data["routes"]:
-                legs = []
+                steps = []
+                duration = 0 # in seconds
+                for leg in route["legs"]:
+                    for step in leg["steps"]:
+                        steps.append({
+                            "to": step["end_location"],
+                            "polyline": step["polyline"]["points"],
+                            "from": step["start_location"],
+                            "mode": step["travel_mode"],
+                            "type": step["transit_details"]["line"]["name"] if "transit_details" in step else ""
+                        })
+                    duration += leg["duration"]["value"]
+                '''legs = []
                 for leg in route["legs"]:
                     steps = []
                     for step in leg["steps"]:
                         steps.append({
                             "duration": step["duration"],
-                            "end_location": step["end_location"],
+                            "to": step["end_location"],
                             "polyline": step["polyline"],
-                            "start_location": step["start_location"],
-                            "travel_mode": step["travel_mode"]
+                            "from": step["start_location"],
+                            "mode": step["travel_mode"]
                         })
                     legs.append({
                         "end_address": leg["end_address"],
@@ -189,7 +218,8 @@ async def get_map_route(origin: str, destination: str, mode: str, arrival_time: 
                         "steps": steps,
                         "distance": leg["distance"],
                         "duration": leg["duration"]
-                    })
+                    })'''
+                
                 overview_polyline = ""
                 for char in route["overview_polyline"]["points"]:
                     # if char in ['\\', '"', "'", '\n', '\t', '\r']:
@@ -197,10 +227,25 @@ async def get_map_route(origin: str, destination: str, mode: str, arrival_time: 
                     # else:
                     #     overview_polyline += char
                     overview_polyline += char
+
+                datetime_duration = datetime.timedelta(seconds=duration)
+                readable_duration = ""
+                if datetime_duration.days > 0:
+                    readable_duration += str(datetime_duration.days)+" days "
+                hours = datetime_duration.seconds//3600
+                minutes = (datetime_duration.seconds%3600)//60
+                if hours > 0:
+                    readable_duration += str(hours) + " hr "
+                if minutes > 0:
+                    readable_duration += str(minutes+(1 if (datetime_duration.seconds%3600)%60 else 0)) + " min "
+                readable_duration = readable_duration.strip()
+
                 routes["routes"].append({
                     "overview_polyline":overview_polyline, 
                     "bounds":route["bounds"],
-                    "legs": legs
+                    "steps": steps,
+                    "duration": readable_duration,
+                    "cost": route["fare"]["text"] if "fare" in route else 0
                 })
         return json.dumps(routes)
     except (urllib.error.URLError, urllib.error.HTTPError, ValueError) as error:
