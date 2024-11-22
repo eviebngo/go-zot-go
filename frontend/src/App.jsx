@@ -13,7 +13,10 @@ import { GoogleMaps } from "./pages/GoogleMaps";
 function App() {
   const [reviews, setReviews] = useState([]);
   const [routes, setRoutes] = useState([]);
-  const [loc, setLoc] = useState({ lat: 34.056365083876415, lng: -118.23400411024693 });
+  const [loc, setLoc] = useState({
+    lat: 34.056365083876415,
+    lng: -118.23400411024693,
+  });
 
   // Some test runs of API functions in frontend
   const getReviews = (routeIdList) => {
@@ -42,7 +45,7 @@ function App() {
         if (res.data) {
           console.log(res.data);
           for (let route of res.data) {
-            setRoutes([...routes,route]);
+            setRoutes([...routes, route]);
           }
         }
       })
@@ -71,7 +74,7 @@ function App() {
       .then((res) => {
         let data = JSON.parse(res.data);
         for (let route of data["routes"]) {
-          setRoutes([...routes,route]);
+          setRoutes([...routes, route]);
         }
       })
       .catch((error) => {
@@ -101,15 +104,13 @@ function App() {
   const fetchRoutesFromSearch = () => {
     //e.preventDefault();
     console.log("fetching routes...");
+    setRoutes([]);
     getCustomRoutes(loc.lat, loc.lng);
-    getMapsRoute("33.643,-117.841",loc.lat+","+loc.lng,"","");
+    getMapsRoute("33.643,-117.841", loc.lat + "," + loc.lng, "", "");
+    console.log("ROUTES>>>", routes);
   };
 
-  useEffect(() => {
-    fetchRoutesFromSearch()
-    getCustomRoutes(34.056365083876415, -118.23400411024693);
-    getReviews([1, 2]);
-  }, []);
+  useEffect(() => {}, []);
 
   // getCustomReviews(1);
   // getMapsAutocomplete("irvine");

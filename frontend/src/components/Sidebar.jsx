@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./Sidebar.css";
 import "@fortawesome/fontawesome-free/css/all.css";
 import { Route } from "./Route";
+import { PlaceSearch } from "./PlaceSearch";
 
 const Sidebar = (props) => {
   const [activeStop, setActiveStop] = useState(null); // For stops
@@ -171,7 +172,10 @@ const Sidebar = (props) => {
           <button className="menu-btn" onClick={toggleMenu}>
             ☰
           </button>
-          <input type="text" placeholder="Search" />
+          <PlaceSearch setLoc={props.setLoc} />
+          <button className="secondary-button" onClick={props.fetchRoutes}>
+            Go
+          </button>
         </div>
 
         {/* Filter and Add New Buttons */}
