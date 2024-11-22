@@ -29,7 +29,7 @@ export const GoogleMaps = (props) => {
       })
   }
 
-  const getMapsRoute = (origin, destination, mode, arrival_time, departure_time) => {
+  const getMapsRoute = (origin, destination, mode, departure_time) => {
     /**
      * origin: string of valid location from Google Maps autocomplete
      * destination: same requirements as origin
@@ -42,7 +42,6 @@ export const GoogleMaps = (props) => {
       origin: origin,
       destination: destination,
       mode: mode,
-      arrival_time: arrival_time,
       departure_time: departure_time
     })
 
@@ -92,7 +91,7 @@ export const GoogleMaps = (props) => {
   function recenter() {
     // Try HTML5 geolocation.
     if (navigator.geolocation) {
-      getMapsRoute("Irvine, CA", "Los Angeles, CA", "transit", "", "");
+      getMapsRoute("Irvine, CA", "Los Angeles, CA", "transit", "");
       navigator.geolocation.getCurrentPosition((position) => {
         const pos = {
           lat: position.coords.latitude,

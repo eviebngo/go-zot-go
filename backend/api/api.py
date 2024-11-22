@@ -8,6 +8,7 @@ from pathlib import Path
 import json
 import os
 from datetime import datetime
+from datetime import timedelta
 
 from geopy import distance
 
@@ -163,7 +164,7 @@ async def get_map_autocomplete(input: str) -> JSONResponse:
 
 
 @app.get("/maps_route")
-async def get_map_route(origin: str, destination: str, mode: str, arrival_time: str, departure_time: str) -> JSONResponse:
+async def get_map_route(origin: str, destination: str, mode: str, departure_time: str) -> JSONResponse:
     '''
     Returns best Google Maps route
     Output format:
@@ -186,22 +187,15 @@ async def get_map_route(origin: str, destination: str, mode: str, arrival_time: 
     destination = urllib.parse.quote(destination)
     mode = urllib.parse.quote(mode)
     
-    if len(arrival_time) == 0:
-        arrival_time = int(datetime.datetime.now().timestamp())
-    else:
-        arrival_time = arrival_time.split("-")
-        arrival_time = datetime.datetime(int(arrival_time[0]),int(arrival_time[1]),int(arrival_time[2]),int(arrival_time[3]),int(arrival_time[4]),int(arrival_time[5]))
-        arrival_time = int(arrival_time.timestamp())
-    
     if len(departure_time) == 0:
-        departure_time = int(datetime.datetime.now().timestamp())
+        departure_time = int(datetime.now().timestamp())
     else:
         departure_time = departure_time.split("-")
-        departure_time = datetime.datetime(int(departure_time[0]),int(departure_time[1]),int(departure_time[2]),int(departure_time[3]),int(departure_time[4]),int(departure_time[5]))
+        departure_time = datetime(int(departure_time[0]),int(departure_time[1]),int(departure_time[2]),int(departure_time[3]),int(departure_time[4]),int(departure_time[5]))
         departure_time = int(departure_time.timestamp())
 
     try:
-        request = urllib.request.urlopen(f"https://maps.googleapis.com/maps/api/directions/json?destination={destination}&origin={origin}&alternatives=true&mode={mode}&arrival_time={arrival_time}&departure_time={departure_time}&key={os.environ['VITE_MAPS_API_KEY']}")
+        request = urllib.request.urlopen(f"https://maps.googleapis.com/maps/api/directions/json?destination={destination}&origin={origin}&alternatives=true&mode={mode}&departure_time={departure_time}&key={os.environ['VITE_MAPS_API_KEY']}")
         data = json.loads(request.read().decode(encoding="utf-8"))
         routes = {"routes":[]}
         if data["status"] == "OK":
@@ -248,7 +242,7 @@ async def get_map_route(origin: str, destination: str, mode: str, arrival_time: 
                     #     overview_polyline += char
                     overview_polyline += char
 
-                datetime_duration = datetime.timedelta(seconds=duration)
+                datetime_duration = timedelta(seconds=duration)
                 readable_duration = ""
                 if datetime_duration.days > 0:
                     readable_duration += str(datetime_duration.days)+" days "
