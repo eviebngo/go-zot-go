@@ -26,7 +26,7 @@ const Sidebar = (props) => {
     { field: "route1", value: {"to":"","from":"","mode":"","type":"","duration":"","cost":""} },
   ]);
 
-  const [reviews, setReviews] = useState({
+  /*const [reviews, setReviews] = useState({
     1: [
       { name: "Rebecca", text: "Great stop!", rating: 5 },
       { name: "Joshua", text: "Very convenient.", rating: 4 },
@@ -39,7 +39,9 @@ const Sidebar = (props) => {
       { name: "Liam", text: "Clean and spacious.", rating: 5 },
       { name: "Olivia", text: "Good for families.", rating: 4 },
     ],
-  });
+  });*/
+  const [reviews, setReviews] = useState([]);
+  const [selectedReviews, setSelectedReviews] = useState([])
 
   // Toggle active stop
   const toggleStop = (stop) => {
@@ -123,14 +125,11 @@ const Sidebar = (props) => {
       alert("Please fill out all fields before adding a route.");
       return;
     }
-    console.log("FORMFIELDS>>", formFields);
-    console.log("FORMDESTINATION>>",formDestination);
 
     var route = [];
     formFields.forEach((field) => {
       route.push(JSON.stringify(field));
     });
-    console.log(route)
 
     var formData = new FormData();
     formData.append("destination_lat", formDestination.geometry.location.lat());
@@ -139,8 +138,6 @@ const Sidebar = (props) => {
     formData.append("route", route);
     formData.append("cost", formCost);
     formData.append("duration", formDuration);
-
-    console.log(route);
 
     axios({
       method: "post",
@@ -166,6 +163,16 @@ const Sidebar = (props) => {
     setSelectedStop(stop);
     setReviewModalOpen(true);
     props.fetchReviews(setReviews);
+    setSelectedReviews([])
+    for (let review of reviews) {
+      console.log(review["routeId"],review["routeId"] == activeStop)
+      if (review["routeId"] == activeStop){
+        setSelectedReviews([...selectedReviews,review])
+      }
+    }
+    setReviews(selectedReviews)
+    console.log("activeStop>>",activeStop)
+    console.log("selectedReviews>>",selectedReviews)
   };
 
   // Close modal
@@ -174,6 +181,8 @@ const Sidebar = (props) => {
     setReviewModalOpen(false);
     setSelectedStop(null);
   };
+
+  console.log("REVIEWS>>",reviews)
 
   return (
     <>
@@ -290,7 +299,6 @@ const Sidebar = (props) => {
         {/* Stops with Dropdowns */}
         <div className="suggestions">
           {props.routes.map((route,index) => {
-            console.log("ROUTE>>", route);
             if (route.overview_polyline) {
               return (
                 <CustomRoute
@@ -629,8 +637,8 @@ const Sidebar = (props) => {
               </button>
             </div>
             <div className="modal-body">
-              {reviews[selectedStop]?.map((review, index) => (
-                <div
+              {selectedReviews?.map((review, index) => {
+                return <div
                   key={"review"+index}
                   style={{
                     borderBottom: "1px solid #ddd",
@@ -643,11 +651,11 @@ const Sidebar = (props) => {
                   >
                     <strong>{review.name}</strong>
                     <span>
-                      {"★".repeat(review.rating)}
-                      {"☆".repeat(5 - review.rating)}
+                      {"★".repeat(review.stars)}
+                      {"☆".repeat(5 - review.stars)}
                     </span>
                   </div>
-                  <p>{review.text}</p>
+                  <p>{review.comments}</p>
                   <div style={{ display: "flex", gap: "10px" }}>
                     <button
                       style={{
@@ -671,8 +679,8 @@ const Sidebar = (props) => {
                     </button>
                   </div>
                 </div>
-              ))}
-              {!reviews[selectedStop]?.length && <p>No reviews available.</p>}
+              })}
+              {!selectedReviews?.length && <p>No reviews available.</p>}
             </div>
           </div>
         </div>

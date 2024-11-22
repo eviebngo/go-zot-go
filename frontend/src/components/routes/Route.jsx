@@ -12,9 +12,8 @@ export const Route = (props) => {
     return total;
   };
   if (props.data) {
-    const { destination, route, time, notes, duration, id } = props.data;
+    const { destination, route, time, notes, duration } = props.data;
     const { activeStop, toggleStop, openReviewModal } = props.functions;
-    console.log(props);
     return (
       <div className="stop">
         <button
@@ -45,7 +44,7 @@ export const Route = (props) => {
               })}
             <button
               className="review-btn"
-              onClick={() => openReviewModal(id)}
+              onClick={() => openReviewModal(props.data.id)}
             >
               <i className="fa-regular fa-comments"></i> View Reviews
             </button>

@@ -6,15 +6,17 @@
       "routeId": "goufEfgcjUtBBCcJ@sDAmD@iDAiECcMCsG?gHAuFrECtCAn@?@U?k@AoA@kABqB?yAB_CAqD?mDA_C?Ib@?nCAhDAdA??`A",
       "stars": 4,
       "comments": "Bro I almost died on this route. Don't take the bus",
-      "time": "2024-11-10T20:11:00"
+      "time": "2024-11-10T20:11:00",
+      "name": "Anonymous"
     },
     {
       "id": 2,
       "isCustom": true,
       "routeId": 1,
       "stars": 5,
-      "comments": "This is such a better route. Thanks to whoever made this",
-      "time": "2024-11-15T20:11:00"
+      "comments": "This is a much better route. Thanks to whoever made this",
+      "time": "2024-11-15T20:11:00",
+      "name": "Anonymous"
     },
     {
       "id": 3,
@@ -22,7 +24,8 @@
       "routeId": "goufEfgcjUtBBCcJ@sDAmD@iDAiECcMCsG?gHAuFrECtCAn@?@U?k@AoA@kABqB?yAB_CAqD?mDA_C?Ib@?nCAhDAdA??`A",
       "stars": 3,
       "comments": "This route sucks",
-      "time": "2024-11-10T20:11:00"
+      "time": "2024-11-10T20:11:00",
+      "name": "Anonymous"
     }
   ]
 }

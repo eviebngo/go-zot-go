@@ -24,7 +24,6 @@ export const CustomRoute = (props) => {
   if (props.data) {
     const { destination, route, time, notes } = props.data;
     const { activeStop, toggleStop, openReviewModal } = props.functions;
-    console.log(props);
     return (
       <div className="stop">
         <button

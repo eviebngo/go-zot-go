@@ -57,7 +57,6 @@ async def read_custom_routes(to_lat: float, to_lon: float) -> JSONResponse:
     if custom_routes_path.exists():
         file = json.load(open(custom_routes_path))
         file_list = [route for route in file["custom_routes"] if distance.distance((to_lat, to_lon), (route["destination_lat"], route["destination_lon"])).miles <= 0.5]
-        print(file_list)
         return JSONResponse(file_list)
     return JSONResponse({"Error": "File not found"})
 
@@ -81,7 +80,6 @@ async def post_custom_route(destination_lat: float = Form(), destination_lon: fl
         "duration": duration
     }
     file["custom_routes"].append(new_custom_route)
-    print(file["custom_routes"])
     with open(custom_routes_path, "w") as f:
         json.dump(file,f)
     
@@ -123,7 +121,9 @@ async def read_reviews(id_list: Annotated[list[str] | None, Query()]) -> JSONRes
         #     else:
         #         id_list.append(id_item)
         # print(format_id_list)
-        file_list = [review for review in file["reviews"] if str(review["routeId"]) in id_list]
+        file_list = file["reviews"]
+        if id_list and len(id_list) > 0 and id_list[0] != '':
+            file_list = [review for review in file_list if str(review["routeId"]) in id_list]
         sorted_list = sorted(file_list, key=lambda item: datetime.fromisoformat(item["time"]), reverse=True)
         return JSONResponse(sorted_list)
     return JSONResponse({"Error": "File not found"})

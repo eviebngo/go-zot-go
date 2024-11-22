@@ -20,7 +20,7 @@ function App() {
   const [destination, setDestination] = useState("");
 
   // Some test runs of API functions in frontend
-  const getReviews = (routeIdList) => { //TODO: rewrite reviews to take as parameter setReviews in Sidebar.jsx
+  /*const getReviews = (routeIdList) => { 
     let url = "";
     routeIdList.forEach((route) => {
       url += `id_list=${route}`;
@@ -32,6 +32,20 @@ function App() {
         if (res.data) {
           console.log(res.data);
           setReviews(res.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };*/
+  const getReviews = (setFetchedReviews) => { 
+    axios
+      .get(`/api/reviews?id_list=`)
+      .then((res) => {
+        if (res.data) {
+          console.log("REVIEWS>>",res.data);
+          setReviews(res.data);
+          setFetchedReviews(res.data)
         }
       })
       .catch((error) => {
