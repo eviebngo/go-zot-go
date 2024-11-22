@@ -210,10 +210,11 @@ const Sidebar = (props) => {
         <div className="suggestions">
           {[0, 1, 2].map((stop) => {
             if (props.routes.length < stop+1) return <></>
+            console.log(props.routes)
             return <Route
               key={stop}
               functions={{ activeStop, toggleStop, openReviewModal }}
-              data={[ props.routes[stop]["destination"], props.routes[stop],"","" ]} // destination, route, time, notes
+              data={props.routes[stop]} // destination, route, time, notes
             />
           })}
 

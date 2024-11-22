@@ -257,10 +257,12 @@ async def get_map_route(origin: str, destination: str, mode: str, departure_time
                 routes["routes"].append({
                     "overview_polyline":overview_polyline, 
                     "bounds":route["bounds"],
-                    "steps": steps,
+                    "route": steps,
                     "duration": readable_duration,
                     "cost": route["fare"]["text"] if "fare" in route else 0,
-                    "destination": destination
+                    "destination": destination,
+                    "time":"",
+                    "notes":""
                 })
         return json.dumps(routes)
     except (urllib.error.URLError, urllib.error.HTTPError, ValueError) as error:

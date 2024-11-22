@@ -103,7 +103,6 @@ function App() {
     console.log("fetching routes...");
     getCustomRoutes(loc.lat, loc.lng);
     getMapsRoute("33.643,-117.841",loc.lat+","+loc.lng,"","");
-    console.log(routes)
   };
 
   useEffect(() => {
@@ -126,6 +125,7 @@ function App() {
           setLoc={setLoc}
           fetchRoutes={fetchRoutesFromSearch}
           routes={routes}
+          setRoutes={setRoutes}
         />
         {/*<iframe
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.4206672116815!2d-122.08424968449795!3d37.42206597982585!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808fb5a6d1231d1d%3A0xcbb3d16d3e4e3b0!2sGoogleplex!5e0!3m2!1sen!2sus!4v1665619143792!5m2!1sen!2sus"

@@ -44,7 +44,9 @@ export const GoogleMaps = (props) => {
       .get(`/api/maps_route?` + parameters.toString())
       .then((res) => {
         let data = JSON.parse(res.data);
-        setRoutes(data["routes"]);
+        for (let route of data["routes"]) {
+          props.setRoutes([...props.routes,route]);
+        }
         console.log(routes);
       })
       .catch((error) => {
@@ -150,6 +152,7 @@ export const GoogleMaps = (props) => {
           zoom={zoom}
         >
           {props.routes.map((route, index) => {
+            console.log(index)
             return (
               <Polyline
                 path={getRoutePath(route)}
