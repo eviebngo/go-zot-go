@@ -83,6 +83,56 @@ function App() {
       });
   };
 
+  const getAllRoutes = (
+    to_lat,
+    to_lon,
+    origin,
+    destination,
+    mode,
+    departure_time
+  ) => {
+    let routeList = [];
+    axios
+      .get(`/api/custom_routes?to_lat=${to_lat}&to_lon=${to_lon}`)
+      .then((res) => {
+        if (res.data) {
+          console.log("YES", res.data);
+          for (let route of res.data) {
+            routeList.push(route);
+          }
+        }
+      })
+      .then(() => {
+        const parameters = new URLSearchParams({
+          origin: origin,
+          destination: destination,
+          mode: mode,
+          departure_time: departure_time,
+        });
+
+        axios
+          .get(`/api/maps_route?` + parameters.toString())
+          .then((res) => {
+            if (res.data) {
+              console.log("YESSSSS");
+              let data = JSON.parse(res.data);
+              for (let route of data["routes"]) {
+                routeList.push(route);
+              }
+            }
+          })
+          .then(() => {
+            setRoutes(routeList);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const getAvgRating = (route) => {
     review_list = reviews.filter((review) => review.routeId == route.id);
     let sum = 0;
@@ -106,8 +156,16 @@ function App() {
     //e.preventDefault();
     console.log("fetching routes...");
     setRoutes([]);
-    getCustomRoutes(loc.lat, loc.lng);
-    getMapsRoute("33.643,-117.841", loc.lat + "," + loc.lng, "", "");
+    // getCustomRoutes(loc.lat, loc.lng);
+    // getMapsRoute("33.643,-117.841", loc.lat + "," + loc.lng, "", "");
+    getAllRoutes(
+      loc.lat,
+      loc.lng,
+      "33.643,-117.841",
+      loc.lat + "," + loc.lng,
+      "",
+      ""
+    );
     console.log("ROUTES>>>", routes);
   };
 
