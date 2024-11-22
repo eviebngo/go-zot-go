@@ -30,6 +30,13 @@ export const GoogleMaps = (props) => {
   }
 
   const getMapsRoute = (origin, destination, mode, arrival_time, departure_time) => {
+    /**
+     * origin: string of valid location from Google Maps autocomplete
+     * destination: same requirements as origin
+     * mode: driving (default), walking, bicycling, transit
+     * arrival_time: string of time in "YYYY-MM-DD-HH-MM-SS" in UTC or "" for now
+     * departure_time: same requirements as arrival_time
+     */
 
     const parameters = new URLSearchParams({
       origin: origin,

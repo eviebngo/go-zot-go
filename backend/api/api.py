@@ -159,17 +159,30 @@ async def get_map_route(origin: str, destination: str, mode: str, arrival_time: 
         ]
     }
     '''
-    # route = gmaps.directions(origin,destination) 
-    # return route
+    # Parse inputs as parameters
     origin = urllib.parse.quote(origin)
     destination = urllib.parse.quote(destination)
-    print("origin, destination",origin,destination)
+    mode = urllib.parse.quote(mode)
+    
+    if len(arrival_time) == 0:
+        arrival_time = int(datetime.datetime.now().timestamp())
+    else:
+        arrival_time = arrival_time.split("-")
+        arrival_time = datetime.datetime(int(arrival_time[0]),int(arrival_time[1]),int(arrival_time[2]),int(arrival_time[3]),int(arrival_time[4]),int(arrival_time[5]))
+        arrival_time = int(arrival_time.timestamp())
+    
+    if len(departure_time) == 0:
+        departure_time = int(datetime.datetime.now().timestamp())
+    else:
+        departure_time = departure_time.split("-")
+        departure_time = datetime.datetime(int(departure_time[0]),int(departure_time[1]),int(departure_time[2]),int(departure_time[3]),int(departure_time[4]),int(departure_time[5]))
+        departure_time = int(departure_time.timestamp())
+
     try:
         request = urllib.request.urlopen(f"https://maps.googleapis.com/maps/api/directions/json?destination={destination}&origin={origin}&alternatives=true&mode={mode}&arrival_time={arrival_time}&departure_time={departure_time}&key={os.environ['VITE_MAPS_API_KEY']}")
         data = json.loads(request.read().decode(encoding="utf-8"))
         routes = {"routes":[]}
         if data["status"] == "OK":
-            # Unformatted
             for route in data["routes"]:
                 steps = []
                 duration = 0 # in seconds
@@ -183,6 +196,7 @@ async def get_map_route(origin: str, destination: str, mode: str, arrival_time: 
                             "type": step["transit_details"]["line"]["name"] if "transit_details" in step else ""
                         })
                     duration += leg["duration"]["value"]
+                # Unformatted
                 '''legs = []
                 for leg in route["legs"]:
                     steps = []
