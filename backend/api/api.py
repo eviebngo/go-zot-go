@@ -80,7 +80,7 @@ async def post_custom_route(destination_lat: float = Form(), destination_lon: fl
     return RedirectResponse(f'/api/custom_routes?to_lat={destination_lat}&to_lon={destination_lon}', status.HTTP_303_SEE_OTHER)
 
 @app.get("/reviews")
-async def read_reviews(custom: bool, id: str | int) -> JSONResponse:
+async def read_reviews(id: str | int) -> JSONResponse:
     """
     Finds all reviews of a route
     If route is through Google Routes, routeId is unique polyline
@@ -88,8 +88,10 @@ async def read_reviews(custom: bool, id: str | int) -> JSONResponse:
     Query: [url]/reviews?custom=[true/false]&id=[id]
     """
     if reviews_path.exists():
+        custom = False
         if id.isdigit():
             id = int(id)
+            custom = True
         file = json.load(open(reviews_path))
         file_list = [review for review in file["reviews"] if review["isCustom"] == custom and review["routeId"] == id]
         return JSONResponse(file_list)

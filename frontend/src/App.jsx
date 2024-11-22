@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Sidebar from "./components/Sidebar";
 import "./App.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -10,13 +11,47 @@ import { getMapsAutocomplete, getMapsRoute } from "./api_functions/maps";
 import { GoogleMaps } from "./pages/GoogleMaps";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [reviews, setReviews] = useState({});
+  const [customRoutes, setCustomRoutes] = useState({});
 
   // Some test runs of API functions in frontend
-  getCustomRoutes(34.056365083876415, -118.23400411024693);
-  getCustomReviews(1);
+  const getReviews = (routeId) => {
+    axios
+      .get(`/api/reviews?id=${routeId}`)
+      .then((res) => {
+        if (res.data) {
+          setReviews(res.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const getCustomRoutes = (to_lat, to_lon) => {
+    axios
+      .get(`/api/custom_routes?to_lat=${to_lat}&to_lon=${to_lon}`)
+      .then((res) => {
+        if (res.data) {
+          setCustomRoutes(res.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    getReviews(1);
+    getCustomRoutes(34.056365083876415, -118.23400411024693);
+  }, []);
+
+  // getCustomReviews(1);
   getMapsAutocomplete("irvine");
   getMapsRoute("Irvine, CA", "Los Angeles, CA", "transit", "", "");
+
+  console.log("REVIEWS>>", reviews);
+  console.log("ROUTES>>", customRoutes);
   return (
     <div className="app">
       <div className="map-container">
