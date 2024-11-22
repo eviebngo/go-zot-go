@@ -61,7 +61,7 @@ export const CustomRoute = (props) => {
               })}
             <button
               className="review-btn"
-              onClick={() => openReviewModal(stop)}
+              onClick={() => openReviewModal(props.data.overview_polyline)}
             >
               <i className="fa-regular fa-comments"></i> View Reviews
             </button>
