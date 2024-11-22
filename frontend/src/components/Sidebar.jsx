@@ -165,6 +165,7 @@ const Sidebar = (props) => {
   const openReviewModal = (stop) => {
     setSelectedStop(stop);
     setReviewModalOpen(true);
+    props.fetchReviews(setReviews);
   };
 
   // Close modal
