@@ -11,7 +11,6 @@ export const Route = (props) => {
     });
     return total;
   };
-  console.log(props)
   if (props.data) {
     const { destination, route, time, notes } = props.data;
     const { activeStop, toggleStop, openReviewModal } = props.functions;

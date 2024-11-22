@@ -87,7 +87,7 @@ export const GoogleMaps = (props) => {
   const recenter = (e) => {
     // Try HTML5 geolocation.
     if (navigator.geolocation) {
-      getMapsRoute("33.643,-117.841", "Los Angeles, CA", "transit", "");
+      //getMapsRoute("33.643,-117.841", "Los Angeles, CA", "transit", "");
       navigator.geolocation.getCurrentPosition((position) => {
         const pos = {
           lat: position.coords.latitude,
@@ -114,8 +114,10 @@ export const GoogleMaps = (props) => {
 
   const getRoutePath = (route) => {
     if ("overview_polyline" in route) {
+      console.log(decodePolyline(route["overview_polyline"]))
       return decodePolyline(route["overview_polyline"])
     } else {
+      console.log([{lat:route["origin_lat"],lng:route["origin_lon"]},{lat:route["destination_lat"],lng:route["destination_lon"]}])
       return [{lat:route["origin_lat"],lng:route["origin_lon"]},{lat:route["destination_lat"],lng:route["destination_lon"]}]
     }
   }
@@ -152,7 +154,6 @@ export const GoogleMaps = (props) => {
           zoom={zoom}
         >
           {props.routes.map((route, index) => {
-            console.log(index)
             return (
               <Polyline
                 path={getRoutePath(route)}

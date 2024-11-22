@@ -14,8 +14,8 @@ function App() {
   const [reviews, setReviews] = useState([]);
   const [routes, setRoutes] = useState([]);
   const [loc, setLoc] = useState({
-    lat: 34.056365083876415,
-    lng: -118.23400411024693,
+    lat: 34.056281794151374,
+    lng: -118.23649137502154,
   });
 
   // Some test runs of API functions in frontend
@@ -47,6 +47,7 @@ function App() {
           for (let route of res.data) {
             setRoutes([...routes, route]);
           }
+          console.log("Routes>>",routes)
         }
       })
       .catch((error) => {
@@ -110,7 +111,9 @@ function App() {
     console.log("ROUTES>>>", routes);
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    fetchRoutesFromSearch()
+  }, []);
 
   // getCustomReviews(1);
   // getMapsAutocomplete("irvine");

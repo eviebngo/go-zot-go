@@ -205,9 +205,9 @@ async def get_map_route(origin: str, destination: str, mode: str, departure_time
                 for leg in route["legs"]:
                     for step in leg["steps"]:
                         steps.append({
-                            "to": step["end_location"],
+                            "to": str(step["end_location"]["lat"])+","+str(step["end_location"]["lng"]),
                             "polyline": step["polyline"]["points"],
-                            "from": step["start_location"],
+                            "from": str(step["start_location"]["lat"])+","+str(step["start_location"]["lng"]),
                             "mode": step["travel_mode"],
                             "type": step["transit_details"]["line"]["name"] if "transit_details" in step else ""
                         })
