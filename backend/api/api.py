@@ -1,6 +1,7 @@
-from fastapi import FastAPI, status, Form
+from fastapi import FastAPI, status, Form, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse
+from typing import Annotated
 
 from typing import TypedDict
 from pathlib import Path
@@ -14,8 +15,6 @@ import urllib.request
 import urllib.parse
 
 import googlemaps
-
-import datetime
 
 '''
 custom_routes_path = Path("../db/custom_routes.json")
@@ -81,27 +80,27 @@ async def post_custom_route(destination_lat: float = Form(), destination_lon: fl
     
     return RedirectResponse(f'/api/custom_routes?to_lat={destination_lat}&to_lon={destination_lon}', status.HTTP_303_SEE_OTHER)
 
-@app.get("/reviews")
-async def read_reviews(id: str | int) -> JSONResponse:
-    """
-    Finds all reviews of a route
-    If route is through Google Routes, routeId is unique polyline
-    If route is custom, routeId is the id associated with custom route
-    Query: [url]/reviews?custom=[true/false]&id=[id]
-    """
-    if reviews_path.exists():
-        custom = False
-        if id.isdigit():
-            id = int(id)
-            custom = True
-        file = json.load(open(reviews_path))
-        file_list = [review for review in file["reviews"] if review["isCustom"] == custom and review["routeId"] == id]
-        sorted_list = sorted(file_list, key=lambda item: datetime.fromisoformat(item["time"]), reverse=True)
-        return JSONResponse(sorted_list)
-    return JSONResponse({"Error": "File not found"})
+# @app.get("/reviews")
+# async def read_reviews(id: str | int) -> JSONResponse:
+#     """
+#     Finds all reviews of a route
+#     If route is through Google Routes, routeId is unique polyline
+#     If route is custom, routeId is the id associated with custom route
+#     Query: [url]/reviews?custom=[true/false]&id=[id]
+#     """
+#     if reviews_path.exists():
+#         custom = False
+#         if id.isdigit():
+#             id = int(id)
+#             custom = True
+#         file = json.load(open(reviews_path))
+#         file_list = [review for review in file["reviews"] if review["isCustom"] == custom and review["routeId"] == id]
+#         sorted_list = sorted(file_list, key=lambda item: datetime.fromisoformat(item["time"]), reverse=True)
+#         return JSONResponse(sorted_list)
+#     return JSONResponse({"Error": "File not found"})
 
 @app.get("/reviews")
-async def read_reviews(id_list: list[int]) -> JSONResponse:
+async def read_reviews(id_list: Annotated[list[str] | None, Query()]) -> JSONResponse:
     """
     Finds all reviews of a route
     If route is through Google Routes, routeId is unique polyline
@@ -110,7 +109,14 @@ async def read_reviews(id_list: list[int]) -> JSONResponse:
     """
     if reviews_path.exists():
         file = json.load(open(reviews_path))
-        file_list = [review for review in file["reviews"] if review["routeId"] in id_list]
+        # format_id_list = []
+        # for id_item in id_list:
+        #     if(id_item.isdigit()):
+        #         id_list.append(int(id_item))
+        #     else:
+        #         id_list.append(id_item)
+        # print(format_id_list)
+        file_list = [review for review in file["reviews"] if str(review["routeId"]) in id_list]
         sorted_list = sorted(file_list, key=lambda item: datetime.fromisoformat(item["time"]), reverse=True)
         return JSONResponse(sorted_list)
     return JSONResponse({"Error": "File not found"})
