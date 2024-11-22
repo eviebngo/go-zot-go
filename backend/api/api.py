@@ -96,7 +96,23 @@ async def read_reviews(id: str | int) -> JSONResponse:
             custom = True
         file = json.load(open(reviews_path))
         file_list = [review for review in file["reviews"] if review["isCustom"] == custom and review["routeId"] == id]
-        return JSONResponse(file_list)
+        sorted_list = sorted(file_list, key=lambda item: datetime.fromisoformat(item["time"]), reverse=True)
+        return JSONResponse(sorted_list)
+    return JSONResponse({"Error": "File not found"})
+
+@app.get("/reviews")
+async def read_reviews(id_list: list[int]) -> JSONResponse:
+    """
+    Finds all reviews of a route
+    If route is through Google Routes, routeId is unique polyline
+    If route is custom, routeId is the id associated with custom route
+    Query: [url]/reviews?custom=[true/false]&id=[id]
+    """
+    if reviews_path.exists():
+        file = json.load(open(reviews_path))
+        file_list = [review for review in file["reviews"] if review["routeId"] in id_list]
+        sorted_list = sorted(file_list, key=lambda item: datetime.fromisoformat(item["time"]), reverse=True)
+        return JSONResponse(sorted_list)
     return JSONResponse({"Error": "File not found"})
 
 @app.post("/reviews")
