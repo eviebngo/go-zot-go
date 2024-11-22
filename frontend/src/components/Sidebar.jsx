@@ -3,7 +3,7 @@ import "./Sidebar.css";
 import "@fortawesome/fontawesome-free/css/all.css";
 import { PlaceSearch } from "./PlaceSearch";
 
-const Sidebar = () => {
+const Sidebar = (props) => {
   const [activeStop, setActiveStop] = useState(null); // For stops
   const [menuOpen, setMenuOpen] = useState(false); // State for the menu
   const [selectedIcons, setSelectedIcons] = useState([]); // For multiple active transportation icons
@@ -99,6 +99,7 @@ const Sidebar = () => {
             ☰
           </button>
           <PlaceSearch />
+          <button className="secondary-button">Go!</button>
         </div>
 
         {/* Suggestions */}

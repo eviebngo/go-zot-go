@@ -15,7 +15,7 @@
   align-items: center; /* Vertically center items */
   gap: 10px; /* Add space between menu button and search bar */
   margin-bottom: 20px; /* Spacing below the search bar */
-  width: 700px;
+  width: 720px;
 }
 
 .menu-btn {

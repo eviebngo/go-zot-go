@@ -6,10 +6,11 @@ import {
   InfoWindow,
 } from "@react-google-maps/api";
 import { decode } from "@googlemaps/polyline-codec";
+import Sidebar from "../components/Sidebar";
 
-export const GoogleMaps = () => {
+export const GoogleMaps = (props) => {
   const decodePolyline = (polyline) => {
-    let result = []
+    let result = [];
     for (let point of decode(polyline)) {
       result.push({ lat: point[0], lng: point[1] });
     }
@@ -23,11 +24,14 @@ export const GoogleMaps = () => {
   // escaped in python
   //const [path, setPath] = useState(decodePolyline("g_rlEf~cnUSSOTgFpI_A|AeFhI{BvDgBpCy@y@qAcAyAaA_EkD_EaEmGqGyK}KuHgHsCsCuB_EoAuEa@gFJ_SBqFKcGw@aFcBoE_HqJsCyDyCeDiCaCwCoDkIaN_DcDyDeCiPiHoDaBwAo@YM_@k@eBiAe@YiAcAeBoBeBsAyAi@wHgAsC}@aDqBwEqEiFkFwAuAqAsAASM[Oq@Bu@Rc@f@]n@?h@ZVz@C|@i@rAEJAp@Yd@y@rA_AzAeC|DoJpOgW`c@sWnb@gMvS_E|FcFtIwClHqBtHwGnZqElTqH|ZoHfYaDbLoCjGcBtB_DnCiCrAmDhAuNtDyEvBuCnBaE~DsDjFaDpGuFlN}EbOeEnMaIpUuCpHqDdG_DpDsEjDsOrIkY~MgGbDiFvD}OtMoMbK}GxE}FbFmL`LaCfDeAvBmBfEiCbE}FhGgHxGwMdKeIpIsLfNyVnWgc@fd@_KlKoIxKaGhIuFtGgR~Rkc@`e@_TtT{RxR}NzKoFpEkDnD{MtN{FhGwEzFaCdEoA`DcBdGmBzM{AnJaAlEuB~FiC~FiI`RoOn]oLrW}GnLsDvHqMh\\{KxXqLrXuClG{CfFsOdT}CzF_BzFiErSqCdLsBbGgElJaBzCwFpJiDvGmEzJuV|j@sL~WqDxHsIlLsG`IcGhJcFxK{AhEuDhLwBlGoMxZ}DxIgPn\\cP`]kPla@sG~OeE|JyFtL}F`LkItPmHzOwL~WqFhLeE`HeF~G{HlIaRrQsIrJkC`EiCdFiHhOwDpGwDbF}ChDuIjH}NjJqZhRiS`M{_@|Ugb@|WsLdHcYrPaZxPcH`EwEfDkDlDsC|DuIvMoNnTcKxOuNvTeEfGsFhFgEfC}FpB}JtBgVdFoExAmDfByOlKiEbDeC`CmOlOoPpPyCdDaCpDeEbHmFhGwPbPyb@ja@}EzCiFpCiEfDmH~GwLdLePfR{DfF{BtEcCxDgEpEmFtEgCtCuBtDyB|FcJrWuBnG}AhHy@fEo@tB_BlD{A|CkErLsGjRkBvFwAzG{@rJG|DBvXBlQEfFUrDeAlHsCxJwGdSkJbYeCbIe@hBWdBi@~B}CzJkH|SkHbT{BdGkClFwCjEuBdCuBjBaEtCuE`B{CXcB@{Gg@sJR_CIsN_BiND{CLwFf@eHjB}An@yJ`EaDhBaBbCu@zB[~AYpFqB`UgArPi@rJOP?bCY`EgAbG_CfFgCtEg@dAwApC\\n@~B`CxC`C"))
   // escaped in python (mode: transit)
-  const [path, setPath] = useState(decodePolyline("ssllExuqmUWX_@l@}C~EcPhWgAzAwJzOaKhPyUt_@kXjc@ySz\\eLxQsIhNkSf\\kQjYmg@~x@kh@nz@eA`BmC`E{Tn^OZwDfGuFbJ{A|B_CxDkJlOeIpMwKhQiE~GsA`C[p@_IhMsMzSaZ`f@{i@p|@sZvf@i@z@yFlJ{Uv_@cFfIaBvBqC`CaCrAkBn@gE`AmSlEmK|BeC^uBL}A@m_@FsF?oE?}LGsNKqSEyLDu]GmBDuAPqBl@aFvBcDfAmB^kCViABwF?{OCmXBuJ@uJAyZCoDHgALw@RgAh@mAfAaA|Ai@dB{@dE}EbWeGxZ_Jpe@qBzJk@`DoApG}@hFsHt`@uAzGmBbI_ArDo@rBuB|FuBnEsChF_B~Bq@z@eC|CgFdFsEnDiF`DwCvAsEfBsBn@oG|A}KfCaM|Cmu@~PeSxEqFjAkT|EaPtDuJ|BcNtCkT`F}FtA_F~@iBViD\\eDNqBDeID{YNgUJsFFwCV}Bj@_C`AaAj@eBrA_BdBkAdB_BhDy@jCe@pCWvCKrC@`GDvNPbg@f@zwA@fF@dGEpF]bJa@zEcE~_@q@~Fy@rH{K~eA}S`rB{@jIuAjMg@|Cq@|Ce@hBmAtDkArC_CdF_GdMgGrMia@r{@}Sbd@k\\bs@{MlYgCpFgGnMeQd_@gPt]ip@fvA_BjDmA~BkAjBqBnCgBpB{ApAoDbCw@b@kCfAeBj@iCl@kBZiCT{BHk^Dci@Fgv@HkYDoEByAFkBPuDv@iBf@{Al@mBbAcC`BeBzAcEfEgN~N{ChDoCrCqFzF{DfEqNlOuGhHeCdDu@rAyA|CaApCi@jBkC~LsCvMqHf^uDjQmDvPgBrGwBnFuClFsQbZcFnIiDjFgKjPuIpNeCxE}CvHcBpFy@|CmBhIgFjTA`@m@jCgBpHoDbOoBzIsHtZ{DxOcCdKcA~Eg@|Bs@rCiB~HwA~FsMbj@cVhcAqFnUwFnV_HnY_DnMgD|N}CfN{Kzd@iNzk@uLxg@mDlM{AlGmEbReChKaAbEw@fDw@`EoBfIoBfIi@~BwA~GmChLkBhIWlBa@tFMjGMxCO|AWtAk@dBeAhBmApAq@d@m@\\aA^gATgAFoCCqDMsC?{BReWjD{G`AaIbA{G~@kNlBoc@jGkb@|FyMnByANkBLgA@UCcD_@gTuDo@I}Aa@uBmA{AqAcFqEw@m@m@[kA[w@IeACkBJuNdAmEl@qAZq@`@i@l@[l@YfAIz@BnDRlENjAXbAj@bAv@t@`@VrFbC|BnAzFhCvAb@fH|@F@^oE"))
+  const [path, setPath] = useState(
+    decodePolyline(
+      "ssllExuqmUWX_@l@}C~EcPhWgAzAwJzOaKhPyUt_@kXjc@ySz\\eLxQsIhNkSf\\kQjYmg@~x@kh@nz@eA`BmC`E{Tn^OZwDfGuFbJ{A|B_CxDkJlOeIpMwKhQiE~GsA`C[p@_IhMsMzSaZ`f@{i@p|@sZvf@i@z@yFlJ{Uv_@cFfIaBvBqC`CaCrAkBn@gE`AmSlEmK|BeC^uBL}A@m_@FsF?oE?}LGsNKqSEyLDu]GmBDuAPqBl@aFvBcDfAmB^kCViABwF?{OCmXBuJ@uJAyZCoDHgALw@RgAh@mAfAaA|Ai@dB{@dE}EbWeGxZ_Jpe@qBzJk@`DoApG}@hFsHt`@uAzGmBbI_ArDo@rBuB|FuBnEsChF_B~Bq@z@eC|CgFdFsEnDiF`DwCvAsEfBsBn@oG|A}KfCaM|Cmu@~PeSxEqFjAkT|EaPtDuJ|BcNtCkT`F}FtA_F~@iBViD\\eDNqBDeID{YNgUJsFFwCV}Bj@_C`AaAj@eBrA_BdBkAdB_BhDy@jCe@pCWvCKrC@`GDvNPbg@f@zwA@fF@dGEpF]bJa@zEcE~_@q@~Fy@rH{K~eA}S`rB{@jIuAjMg@|Cq@|Ce@hBmAtDkArC_CdF_GdMgGrMia@r{@}Sbd@k\\bs@{MlYgCpFgGnMeQd_@gPt]ip@fvA_BjDmA~BkAjBqBnCgBpB{ApAoDbCw@b@kCfAeBj@iCl@kBZiCT{BHk^Dci@Fgv@HkYDoEByAFkBPuDv@iBf@{Al@mBbAcC`BeBzAcEfEgN~N{ChDoCrCqFzF{DfEqNlOuGhHeCdDu@rAyA|CaApCi@jBkC~LsCvMqHf^uDjQmDvPgBrGwBnFuClFsQbZcFnIiDjFgKjPuIpNeCxE}CvHcBpFy@|CmBhIgFjTA`@m@jCgBpHoDbOoBzIsHtZ{DxOcCdKcA~Eg@|Bs@rCiB~HwA~FsMbj@cVhcAqFnUwFnV_HnY_DnMgD|N}CfN{Kzd@iNzk@uLxg@mDlM{AlGmEbReChKaAbEw@fDw@`EoBfIoBfIi@~BwA~GmChLkBhIWlBa@tFMjGMxCO|AWtAk@dBeAhBmApAq@d@m@\\aA^gATgAFoCCqDMsC?{BReWjD{G`AaIbA{G~@kNlBoc@jGkb@|FyMnByANkBLgA@UCcD_@gTuDo@I}Aa@uBmA{AqAcFqEw@m@m@[kA[w@IeACkBJuNdAmEl@qAZq@`@i@l@[l@YfAIz@BnDRlENjAXbAj@bAv@t@`@VrFbC|BnAzFhCvAb@fH|@F@^oE"
+    )
+  );
 
-  const position = { lat: 33.643, lng: -117.841 } // UC Irvine
-  const [center,setCenter] = useState(position);
-  const [zoom,setZoom] = useState(10);
+  const [center, setCenter] = useState({ lat: 33.643, lng: -117.841 });
+  const [zoom, setZoom] = useState(10);
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_MAPS_API_KEY,
     libraries: ["places"],
@@ -50,10 +54,21 @@ export const GoogleMaps = () => {
       throw Error("Error: Your browser doesn't support geolocation.");
     }
   }
+
+  const goToLocation = (lat, lng) => {
+    const pos = {
+      lat,
+      lng,
+    };
+    setCenter(pos);
+    setZoom(13);
+  };
+
   return isLoaded ? (
     <div>
       <button
         id="recenter-button"
+        className="primary-button"
         onClick={recenter}
         style={{
           position: "absolute",
@@ -61,6 +76,7 @@ export const GoogleMaps = () => {
           right: 60,
           margin: 8,
           // marginLeft: "1000px",
+          backgroundColor: "#f9f9f9",
         }}
       >
         Recenter
@@ -69,12 +85,13 @@ export const GoogleMaps = () => {
         style={{
           width: "100vw",
           height: "100vh",
-          display: "flex",
-          justifyContent: "right",
         }}
       >
         <GoogleMap
-          mapContainerStyle={{ width: "60%", height: "100%" }}
+          mapContainerStyle={{
+            width: "100%",
+            height: "100%",
+          }}
           center={center}
           zoom={zoom}
         >
@@ -82,6 +99,7 @@ export const GoogleMaps = () => {
             path={path}
             options={{ strokeColor: "#4285f4", strokeWeight: 5 }}
           />
+          <Sidebar />
         </GoogleMap>
       </div>
     </div>
