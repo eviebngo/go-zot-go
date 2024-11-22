@@ -604,7 +604,7 @@ const Sidebar = (props) => {
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              Reviews for Stop {selectedStop}
+              Reviews
               <button className="close-btn" onClick={closeModal}>
                 &times;
               </button>
