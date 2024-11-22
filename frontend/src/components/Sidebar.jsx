@@ -18,7 +18,7 @@ const Sidebar = (props) => {
   const [routes, setRoutes] = useState([]); // To store dynamically added stops
   const [destination, setDestination] = useState("");
 
-  const [formDestination, setFormDestination] = useState("");
+  const [formDestination, setFormDestination] = useState({});
   const [formCost, setFormCost] = useState("");
   const [formDuration, setFormDuration] = useState("");
 
@@ -26,7 +26,7 @@ const Sidebar = (props) => {
     { field: "route1", value: {"to":"","from":"","mode":"","type":"","duration":"","cost":""} },
   ]);
 
-  const [reviews, setReviews] = useState({
+  /*const [reviews, setReviews] = useState({
     1: [
       { name: "Rebecca", text: "Great stop!", rating: 5 },
       { name: "Joshua", text: "Very convenient.", rating: 4 },
@@ -39,7 +39,9 @@ const Sidebar = (props) => {
       { name: "Liam", text: "Clean and spacious.", rating: 5 },
       { name: "Olivia", text: "Good for families.", rating: 4 },
     ],
-  });
+  });*/
+  const [reviews, setReviews] = useState([]);
+  const [selectedReviews, setSelectedReviews] = useState([])
 
   // Toggle active stop
   const toggleStop = (stop) => {
@@ -69,30 +71,30 @@ const Sidebar = (props) => {
   };
 
   // Handle form input changes to steps
-  const handleStepChange = (index, value, detail) => {
-    if ("end location" in detail) {
+  const handleStepChange = (index, new_value, detail) => {
+    if (detail.includes("end location")) {
       const updatedFields = [...formFields];
-      updatedFields[index].value.to = value;
+      updatedFields[index].value.to = new_value;
       setFormFields(updatedFields);
-    } else if ("start location" in detail) {
+    } else if (detail.includes("start location")) {
       const updatedFields = [...formFields];
-      updatedFields[index].value.from = value;
+      updatedFields[index].value.from = new_value;
       setFormFields(updatedFields);
-    } else if ("mode" in detail) {
+    } else if (detail.includes("travel mode")) {
       const updatedFields = [...formFields];
-      updatedFields[index].value.mode = value;
+      updatedFields[index].value.mode = new_value;
       setFormFields(updatedFields);
-    } else if ("type" in detail) {
+    } else if (detail.includes("mode details")) {
       const updatedFields = [...formFields];
-      updatedFields[index].value.type = value;
+      updatedFields[index].value.type = new_value;
       setFormFields(updatedFields);
-    } else if ("duration" in detail) {
+    } else if (detail.includes("duration")) {
       const updatedFields = [...formFields];
-      updatedFields[index].value.duration = value;
+      updatedFields[index].value.duration = new_value;
       setFormFields(updatedFields);
-    } else if ("cost" in detail) {
+    } else if (detail.includes("cost")) {
       const updatedFields = [...formFields];
-      updatedFields[index].value.cost = value;
+      updatedFields[index].value.cost = new_value;
       setFormFields(updatedFields);
     }
   }
@@ -113,10 +115,9 @@ const Sidebar = (props) => {
 
   // Handle form submission to add a new route
   const handleAddRoute = () => {
-    console.log("FORMFIELDS>>", formFields);
-    console.log(formDestination);
     if (
-      formFields.some((field) => field.value.trim() === "") ||
+      formFields.some((field) => field.value.to == "") ||
+      formFields.some((field) => field.value.from == "") ||
       formDestination == "" ||
       formCost == "" ||
       formDuration == ""
@@ -127,7 +128,7 @@ const Sidebar = (props) => {
 
     var route = [];
     formFields.forEach((field) => {
-      route.push(field.value);
+      route.push(JSON.stringify(field));
     });
 
     var formData = new FormData();
@@ -137,8 +138,6 @@ const Sidebar = (props) => {
     formData.append("route", route);
     formData.append("cost", formCost);
     formData.append("duration", formDuration);
-
-    console.log(route);
 
     axios({
       method: "post",
@@ -156,13 +155,24 @@ const Sidebar = (props) => {
     const newRoute = formFields.map((field) => field.value).join(" -> ");
     setRoutes([...routes, newRoute]); // Add the new route to the list
     setModalOpen(false); // Close modal after adding
-    setFormFields([{ field: "route1", value: "" }]); // Reset fields
+    setFormFields([{ field: "route1", value: {"to":"","from":"","mode":"","type":"","duration":"","cost":""} }]); // Reset fields
   };
 
   // Open review modal for reviews
   const openReviewModal = (stop) => {
     setSelectedStop(stop);
     setReviewModalOpen(true);
+    props.fetchReviews(setReviews);
+    setSelectedReviews([])
+    for (let review of reviews) {
+      console.log(review["routeId"],review["routeId"] == activeStop)
+      if (review["routeId"] == activeStop){
+        setSelectedReviews([...selectedReviews,review])
+      }
+    }
+    setReviews(selectedReviews)
+    console.log("activeStop>>",activeStop)
+    console.log("selectedReviews>>",selectedReviews)
   };
 
   // Close modal
@@ -171,6 +181,8 @@ const Sidebar = (props) => {
     setReviewModalOpen(false);
     setSelectedStop(null);
   };
+
+  console.log("REVIEWS>>",reviews)
 
   return (
     <>
@@ -254,26 +266,43 @@ const Sidebar = (props) => {
 
         {/* Filter and Add New Buttons */}
         <div className="action-buttons">
-          {/* <button
+          <button
             className="filter-btn"
             onClick={() => setFiltersOpen(!filtersOpen)}
           >
             Filters
-          </button> */}
+          </button>
 
           <button className="popup-btn" onClick={() => setModalOpen(true)}>
             Add New
           </button>
         </div>
 
+          {/* Filter Dropdown */}
+          {filtersOpen && (
+          <div className="filter-dropdown">
+            <label>
+              <input type="checkbox" />
+              Price
+            </label>
+            <label>
+              <input type="checkbox" />
+              Rating
+            </label>
+            <label>
+              <input type="checkbox" />
+              Distance
+            </label>
+          </div>
+        )}
+
         {/* Stops with Dropdowns */}
         <div className="suggestions">
-          {props.routes.map((route) => {
-            console.log("ROUTE>>", route);
+          {props.routes.map((route,index) => {
             if (route.overview_polyline) {
               return (
                 <CustomRoute
-                  key={route.overview_polyline}
+                  key={"route.overview_polyline"+index}
                   functions={{ activeStop, toggleStop, openReviewModal }}
                   data={route}
                   destination={destination}
@@ -359,7 +388,7 @@ const Sidebar = (props) => {
               </div>
               {formFields.map((field, index) => (
                 <div
-                  key={index}
+                  key={"formField"+index}
                   style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
                 >
                   {/* <input
@@ -422,11 +451,40 @@ const Sidebar = (props) => {
                     )}
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", marginLeft: "10px" }}>
+                    {/*<div
+                      style={{
+                        flex: 1,
+                        marginRight: "10px",
+                        background: "white",
+                        color: "black",
+                        border: "1px solid #ccc",
+                        padding: "10px",
+                        borderRadius: "5px",
+                        marginBottom: "10px"
+                      }}
+                    >
+                    <PlaceSearchForm setFormVal={handleStepChange} placeholder={"Enter start location"} index={index}/>
+                    </div>
+
+                    <div
+                      style={{
+                        flex: 1,
+                        marginRight: "10px",
+                        background: "white",
+                        color: "black",
+                        border: "1px solid #ccc",
+                        padding: "10px",
+                        borderRadius: "5px",
+                        marginBottom: "10px"
+                      }}
+                    >
+                    <PlaceSearchForm setFormVal={handleStepChange} placeholder={"Enter end location"} index={index}/>
+                    </div>*/}
                     <input
                       type="text"
                       placeholder="Enter start location"
                       value={field.value.from}
-                      onChange={(e) => handleStepChange(index, e.target.value, placeholder)}
+                      onChange={(e) => handleStepChange(index, e.target.value, "Enter start location")}
                       style={{
                         flex: 1,
                         marginRight: "10px",
@@ -442,7 +500,7 @@ const Sidebar = (props) => {
                       type="text"
                       placeholder="Enter end location"
                       value={field.value.to}
-                      onChange={(e) => handleStepChange(index, e.target.value, placeholder)}
+                      onChange={(e) => handleStepChange(index, e.target.value, "Enter end location")}
                       style={{
                         flex: 1,
                         marginRight: "10px",
@@ -458,7 +516,7 @@ const Sidebar = (props) => {
                       type="text"
                       placeholder="Enter travel mode"
                       value={field.value.mode}
-                      onChange={(e) => handleStepChange(index, e.target.value, placeholder)}
+                      onChange={(e) => handleStepChange(index, e.target.value, "Enter travel mode")}
                       style={{
                         flex: 1,
                         marginRight: "10px",
@@ -474,7 +532,7 @@ const Sidebar = (props) => {
                       type="text"
                       placeholder="Travel mode details"
                       value={field.value.type}
-                      onChange={(e) => handleStepChange(index, e.target.value, placeholder)}
+                      onChange={(e) => handleStepChange(index, e.target.value, "Travel mode details")}
                       style={{
                         flex: 1,
                         marginRight: "10px",
@@ -490,7 +548,7 @@ const Sidebar = (props) => {
                       type="text"
                       placeholder="Enter duration"
                       value={field.value.duration}
-                      onChange={(e) => handleStepChange(index, e.target.value, placeholder)}
+                      onChange={(e) => handleStepChange(index, e.target.value, "Enter duration")}
                       style={{
                         flex: 1,
                         marginRight: "10px",
@@ -506,7 +564,7 @@ const Sidebar = (props) => {
                       type="text"
                       placeholder="Enter cost"
                       value={field.value.cost}
-                      onChange={(e) => handleStepChange(index, e.target.value, placeholder)}
+                      onChange={(e) => handleStepChange(index, e.target.value, "Enter cost")}
                       style={{
                         flex: 1,
                         marginRight: "10px",
@@ -573,15 +631,15 @@ const Sidebar = (props) => {
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              Reviews for Stop {selectedStop}
+              Reviews
               <button className="close-btn" onClick={closeModal}>
                 &times;
               </button>
             </div>
             <div className="modal-body">
-              {reviews[selectedStop]?.map((review, index) => (
-                <div
-                  key={index}
+              {selectedReviews?.map((review, index) => {
+                return <div
+                  key={"review"+index}
                   style={{
                     borderBottom: "1px solid #ddd",
                     marginBottom: "10px",
@@ -593,11 +651,11 @@ const Sidebar = (props) => {
                   >
                     <strong>{review.name}</strong>
                     <span>
-                      {"★".repeat(review.rating)}
-                      {"☆".repeat(5 - review.rating)}
+                      {"★".repeat(review.stars)}
+                      {"☆".repeat(5 - review.stars)}
                     </span>
                   </div>
-                  <p>{review.text}</p>
+                  <p>{review.comments}</p>
                   <div style={{ display: "flex", gap: "10px" }}>
                     <button
                       style={{
@@ -621,8 +679,8 @@ const Sidebar = (props) => {
                     </button>
                   </div>
                 </div>
-              ))}
-              {!reviews[selectedStop]?.length && <p>No reviews available.</p>}
+              })}
+              {!selectedReviews?.length && <p>No reviews available.</p>}
             </div>
           </div>
         </div>

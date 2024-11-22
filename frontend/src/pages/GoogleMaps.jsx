@@ -183,6 +183,7 @@ export const GoogleMaps = (props) => {
             setLoc={props.setLoc}
             fetchRoutes={props.fetchRoutes}
             routes={props.routes}
+            fetchReviews={props.fetchReviews}
           />
         </GoogleMap>
       </div>
