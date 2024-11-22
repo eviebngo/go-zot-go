@@ -28,6 +28,17 @@
       ],
       "time": "2024-11-07T20:11:00",
       "notes": "This is a really easy route"
+    },
+    {
+      "id": 2,
+      "origin": "UCI",
+      "destination": "Fashion Island",
+      "destination_lat": 33.616565,
+      "destination_lon": -117.8759217,
+      "route": ["1"],
+      "time": "2024-11-22T04:15:37",
+      "cost": 1.0,
+      "duration": "1"
     }
   ]
 }

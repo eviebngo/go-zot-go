@@ -62,7 +62,7 @@ async def read_custom_routes(to_lat: float, to_lon: float) -> JSONResponse:
 
 
 @app.post("/custom_routes")
-async def post_custom_route(destination_lat: float = Form(), destination_lon: float = Form(), destination: str = Form(), route: list[dict] = Form()) -> JSONResponse:
+async def post_custom_route(destination_lat: float = Form(), destination_lon: float = Form(), destination: str = Form(), route: list[str] = Form(), cost: float = Form(), duration: str = Form()) -> JSONResponse:
     date = datetime.now()
     file = json.load(open(custom_routes_path))
     id = file["custom_routes"][-1]["id"]+1
@@ -73,7 +73,9 @@ async def post_custom_route(destination_lat: float = Form(), destination_lon: fl
         "destination_lat": destination_lat,
         "destination_lon": destination_lon,
         "route": route,
-        "time": date.isoformat(timespec="seconds")
+        "time": date.isoformat(timespec="seconds"),
+        "cost": cost,
+        "duration": duration
     }
     file["custom_routes"].append(new_custom_route)
     with open(custom_routes_path, "w") as f:
@@ -198,18 +200,33 @@ async def get_map_route(origin: str, destination: str, mode: str, departure_time
         request = urllib.request.urlopen(f"https://maps.googleapis.com/maps/api/directions/json?destination={destination}&origin={origin}&alternatives=true&mode={mode}&departure_time={departure_time}&key={os.environ['VITE_MAPS_API_KEY']}")
         data = json.loads(request.read().decode(encoding="utf-8"))
         routes = {"routes":[]}
+        color_list = ["#A8DADC","#457B9D","#E63946","#F4A261","#E9C46A","#2A9D8F","#8A817C","#B5838D","#6A4C93","#778DA9","#91A8D0","#C1A57B","#A3B18A"]
         if data["status"] == "OK":
             for route in data["routes"]:
                 steps = []
                 duration = 0 # in seconds
                 for leg in route["legs"]:
                     for step in leg["steps"]:
+                        print(step)
+                        org = None
+                        line = None
+
+                        if "transit_details" in step:
+                            if "line" in step["transit_details"]:
+                                if "agencies" in step["transit_details"]["line"]:
+                                    org = step["transit_details"]["line"]["agencies"][0]["name"]
+                                if "short_name" in step["transit_details"]["line"]:
+                                    line = step["transit_details"]["line"]["short_name"]
                         steps.append({
                             "to": str(step["end_location"]["lat"])+","+str(step["end_location"]["lng"]),
+                            "instructions": step["html_instructions"],
                             "polyline": step["polyline"]["points"],
                             "from": str(step["start_location"]["lat"])+","+str(step["start_location"]["lng"]),
                             "mode": step["travel_mode"],
-                            "type": step["transit_details"]["line"]["name"] if "transit_details" in step else ""
+                            "type": step["transit_details"]["line"]["name"] if "transit_details" in step else "",
+                            "duration": step["duration"]["text"],
+                            "org": org,
+                            "line": line
                         })
                     duration += leg["duration"]["value"]
                 # Unformatted
@@ -254,6 +271,11 @@ async def get_map_route(origin: str, destination: str, mode: str, departure_time
                     readable_duration += str(minutes+(1 if (datetime_duration.seconds%3600)%60 else 0)) + " min "
                 readable_duration = readable_duration.strip()
 
+                color = "#4285f4"
+                if len(color_list) > 0:
+                    color = color_list[0]
+                    color_list = color_list[1:]
+
                 routes["routes"].append({
                     "overview_polyline":overview_polyline, 
                     "bounds":route["bounds"],
@@ -262,8 +284,10 @@ async def get_map_route(origin: str, destination: str, mode: str, departure_time
                     "cost": route["fare"]["text"] if "fare" in route else 0,
                     "destination": destination,
                     "time":"",
-                    "notes":""
+                    "notes":"",
+                    "color": color
                 })
+
         return json.dumps(routes)
     except (urllib.error.URLError, urllib.error.HTTPError, ValueError) as error:
         return JSONResponse({"Error":error})

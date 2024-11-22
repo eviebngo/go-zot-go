@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import "./Sidebar.css";
 import "@fortawesome/fontawesome-free/css/all.css";
-import { Route } from "./Route";
+import { Route } from "./routes/Route";
 import { PlaceSearch } from "./PlaceSearch";
+import { CustomRoute } from "./routes/CustomRoute";
+import { PlaceSearchForm } from "./PlaceSearchForm";
+import axios from "axios";
 
 const Sidebar = (props) => {
   const [activeStop, setActiveStop] = useState(null); // For stops
@@ -13,9 +16,14 @@ const Sidebar = (props) => {
   const [reviewModalOpen, setReviewModalOpen] = useState(false); // For Review modal visibility
   const [selectedStop, setSelectedStop] = useState(null); // To track selected stop for reviews
   const [routes, setRoutes] = useState([]); // To store dynamically added stops
+  const [destination, setDestination] = useState("");
+
+  const [formDestination, setFormDestination] = useState("");
+  const [formCost, setFormCost] = useState("");
+  const [formDuration, setFormDuration] = useState("");
+
   const [formFields, setFormFields] = useState([
-    { field: "starting", value: "" },
-    { field: "destination", value: "" },
+    { field: "route1", value: "" },
   ]);
 
   const [reviews, setReviews] = useState({
@@ -36,6 +44,7 @@ const Sidebar = (props) => {
   // Toggle active stop
   const toggleStop = (stop) => {
     setActiveStop(activeStop === stop ? null : stop);
+    console.log("STOP>>", activeStop);
   };
 
   // Toggle menu visibility
@@ -61,7 +70,10 @@ const Sidebar = (props) => {
 
   // Add a new field
   const handleAddField = () => {
-    setFormFields([...formFields, { field: "additional", value: "" }]);
+    setFormFields([
+      ...formFields,
+      { field: "route" + (formFields.length + 1), value: "" },
+    ]);
   };
 
   // Remove a field
@@ -72,18 +84,50 @@ const Sidebar = (props) => {
 
   // Handle form submission to add a new route
   const handleAddRoute = () => {
-    if (formFields.some((field) => field.value.trim() === "")) {
+    console.log("FORMFIELDS>>", formFields);
+    console.log(formDestination);
+    if (
+      formFields.some((field) => field.value.trim() === "") ||
+      formDestination == "" ||
+      formCost == "" ||
+      formDuration == ""
+    ) {
       alert("Please fill out all fields before adding a route.");
       return;
     }
 
+    var route = [];
+    formFields.forEach((field) => {
+      route.push(field.value);
+    });
+
+    var formData = new FormData();
+    formData.append("destination_lat", formDestination.geometry.location.lat());
+    formData.append("destination_lon", formDestination.geometry.location.lng());
+    formData.append("destination", formDestination.name);
+    formData.append("route", route);
+    formData.append("cost", formCost);
+    formData.append("duration", formDuration);
+
+    console.log(route);
+
+    axios({
+      method: "post",
+      url: "/api/custom_routes",
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+      .then((res) => {})
+      .catch((err) => {
+        console.log(err);
+      });
+
     const newRoute = formFields.map((field) => field.value).join(" -> ");
     setRoutes([...routes, newRoute]); // Add the new route to the list
     setModalOpen(false); // Close modal after adding
-    setFormFields([
-      { field: "starting", value: "" },
-      { field: "destination", value: "" },
-    ]); // Reset fields
+    setFormFields([{ field: "route1", value: "" }]); // Reset fields
   };
 
   // Open review modal for reviews
@@ -102,77 +146,22 @@ const Sidebar = (props) => {
   return (
     <>
       {/* Menu Bar */}
-      <div className={`menu-bar ${menuOpen ? "open" : ""}`}>
+      {/* <div className={`menu-bar ${menuOpen ? "open" : ""}`}>
         <span className="close-menu-btn" onClick={toggleMenu}>
           &times;
         </span>
-        <h2>Transportation Types</h2>
-
-        {/* Walking Icon */}
-        <div
-          className={`menu-item ${
-            selectedIcons.includes("walking") ? "active-icon" : ""
-          }`}
-          onClick={() => toggleIcon("walking")}
-        >
-          <img
-            src="https://img.icons8.com/ios-filled/100/null/walking.png"
-            alt="Walking"
-          />
-          <span className="menu-label">Walking</span>
-        </div>
-
-        {/* Train Icon */}
-        <div
-          className={`menu-item ${
-            selectedIcons.includes("train") ? "active-icon" : ""
-          }`}
-          onClick={() => toggleIcon("train")}
-        >
-          <img
-            src="https://img.icons8.com/ios-filled/100/null/train.png"
-            alt="Train"
-          />
-          <span className="menu-label">Train</span>
-        </div>
-
-        {/* Bus Icon */}
-        <div
-          className={`menu-item ${
-            selectedIcons.includes("bus") ? "active-icon" : ""
-          }`}
-          onClick={() => toggleIcon("bus")}
-        >
-          <img
-            src="https://img.icons8.com/ios-filled/100/null/bus.png"
-            alt="Bus"
-          />
-          <span className="menu-label">Bus</span>
-        </div>
-
-        {/* Car Icon */}
-        <div
-          className={`menu-item ${
-            selectedIcons.includes("car") ? "active-icon" : ""
-          }`}
-          onClick={() => toggleIcon("car")}
-        >
-          <img
-            src="https://img.icons8.com/ios-filled/100/null/car.png"
-            alt="Car"
-          />
-          <span className="menu-label">Car</span>
-        </div>
-      </div>
+        <h2>Transportation Types</h2> */}
+      {/* </div> */}
 
       {/* Sidebar */}
       <div className="sidebar">
         {/* Search Bar */}
+        <h1>Go Zot Go!</h1>
         <div className="search-bar">
           <button className="menu-btn" onClick={toggleMenu}>
             ☰
           </button>
-          <PlaceSearch setLoc={props.setLoc} />
+          <PlaceSearch setLoc={props.setLoc} setDestination={setDestination} />
           <button className="secondary-button" onClick={props.fetchRoutes}>
             Go
           </button>
@@ -180,53 +169,41 @@ const Sidebar = (props) => {
 
         {/* Filter and Add New Buttons */}
         <div className="action-buttons">
-          <button
+          {/* <button
             className="filter-btn"
             onClick={() => setFiltersOpen(!filtersOpen)}
           >
             Filters
-          </button>
+          </button> */}
 
           <button className="popup-btn" onClick={() => setModalOpen(true)}>
             Add New
           </button>
         </div>
 
-        {/* Filter Dropdown */}
-        {filtersOpen && (
-          <div className="filter-dropdown">
-            <label>
-              <input type="checkbox" />
-              Price
-            </label>
-            <label>
-              <input type="checkbox" />
-              Rating
-            </label>
-            <label>
-              <input type="checkbox" />
-              Distance
-            </label>
-          </div>
-        )}
-
         {/* Stops with Dropdowns */}
         <div className="suggestions">
-          {[0, 1, 2].map((stop) => {
-            if (props.routes.length < stop+1) return <></>
-            console.log(props.routes)
-            return <Route
-              key={stop}
-              functions={{ activeStop, toggleStop, openReviewModal }}
-              data={props.routes[stop]} // destination, route, time, notes
-            />
+          {props.routes.map((route) => {
+            console.log("ROUTE>>", route);
+            if (route.overview_polyline) {
+              return (
+                <CustomRoute
+                  key={route.overview_polyline}
+                  functions={{ activeStop, toggleStop, openReviewModal }}
+                  data={route}
+                  destination={destination}
+                />
+              );
+            } else {
+              return (
+                <Route
+                  key={route.id}
+                  functions={{ activeStop, toggleStop, openReviewModal }}
+                  data={route} // destination, route, time, notes
+                />
+              );
+            }
           })}
-
-          {routes.map((route, index) => (
-            <div key={index} className="stop">
-              <button className="suggestion">{route}</button>
-            </div>
-          ))}
         </div>
       </div>
 
@@ -241,12 +218,82 @@ const Sidebar = (props) => {
               </button>
             </div>
             <div className="modal-body">
+              <p style={{ marginBottom: 10 }}>
+                Fill in route details from UCI to destination
+              </p>
+              <div style={{ display: "flex", marginBottom: "10px" }}>
+                <div
+                  style={{
+                    flex: 1,
+                    marginRight: "10px",
+                    background: "white",
+                    color: "black",
+                    border: "1px solid #ccc",
+                    padding: "10px",
+                    borderRadius: "5px",
+                  }}
+                >
+                  <PlaceSearchForm setFormVal={setFormDestination} />
+                </div>
+              </div>
+              <div>
+                <input
+                  type="number"
+                  placeholder="Enter cost, in dollars"
+                  required
+                  style={{
+                    marginBottom: "10px",
+                    background: "white",
+                    color: "black",
+                    border: "1px solid #ccc",
+                    padding: "10px",
+                    borderRadius: "5px",
+                    width: "98%",
+                  }}
+                  onChange={(e) => {
+                    setFormCost(e.target.value);
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="Enter duration"
+                  required
+                  style={{
+                    marginBottom: "10px",
+                    background: "white",
+                    color: "black",
+                    border: "1px solid #ccc",
+                    padding: "10px",
+                    borderRadius: "5px",
+                    width: "98%",
+                  }}
+                  onChange={(e) => {
+                    setFormDuration(e.target.value);
+                  }}
+                />
+              </div>
               {formFields.map((field, index) => (
                 <div
                   key={index}
                   style={{ display: "flex", marginBottom: "10px" }}
                 >
                   <input
+                    type="text"
+                    placeholder="Add a route"
+                    value={field.value}
+                    onChange={(e) => handleInputChange(index, e.target.value)}
+                    style={{
+                      flex: 1,
+                      marginRight: "10px",
+                      background: "white",
+                      color: "black",
+                      border: "1px solid #ccc",
+                      padding: "10px",
+                      borderRadius: "5px",
+                    }}
+                  />
+
+                  {/* <input
                     type="text"
                     placeholder={
                       field.field === "starting"
@@ -266,8 +313,8 @@ const Sidebar = (props) => {
                       padding: "10px",
                       borderRadius: "5px",
                     }}
-                  />
-                  {index >= 2 && (
+                  /> */}
+                  {index >= 1 && (
                     <button
                       type="button"
                       onClick={() => handleRemoveField(index)}
@@ -297,7 +344,7 @@ const Sidebar = (props) => {
                   cursor: "pointer",
                 }}
               >
-                + Add Field
+                + Add Step Instructions
               </button>
             </div>
             <div className="modal-footer">

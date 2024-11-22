@@ -4,13 +4,13 @@ import Autocomplete from "react-google-autocomplete";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { useGoogleMap } from "@react-google-maps/api";
 
-export const PlaceSearch = (props) => {
+export const PlaceSearchForm = (props) => {
+  console.log(props);
   const libraries = ["places"];
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_MAPS_API_KEY,
     libraries,
   });
-  const map = useGoogleMap();
 
   return isLoaded ? (
     <Autocomplete
@@ -21,19 +21,10 @@ export const PlaceSearch = (props) => {
         componentRestrictions: { country: ["us"] },
       }}
       onPlaceSelected={(place) => {
-        if (map) {
-          var latLng = new google.maps.LatLng(
-            place.geometry.location.lat(),
-            place.geometry.location.lng()
-          );
-          map.panTo(latLng);
-          map.setZoom(18);
-        }
-        props.setLoc({
-          lat: place.geometry.location.lat(),
-          lng: place.geometry.location.lng(),
-        });
-        props.setDestination(place.name);
+        props.setFormVal(place);
+      }}
+      style={{
+        width: "100%",
       }}
     />
   ) : (

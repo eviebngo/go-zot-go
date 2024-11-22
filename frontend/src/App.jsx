@@ -17,6 +17,7 @@ function App() {
     lat: 34.056281794151374,
     lng: -118.23649137502154,
   });
+  const [destination, setDestination] = useState("");
 
   // Some test runs of API functions in frontend
   const getReviews = (routeIdList) => {
@@ -47,7 +48,7 @@ function App() {
           for (let route of res.data) {
             setRoutes([...routes, route]);
           }
-          console.log("Routes>>",routes)
+          console.log("Routes>>", routes);
         }
       })
       .catch((error) => {
@@ -163,15 +164,15 @@ function App() {
       loc.lng,
       "33.643,-117.841",
       loc.lat + "," + loc.lng,
-      "",
+      "transit",
       ""
     );
     console.log("ROUTES>>>", routes);
   };
 
-  useEffect(() => {
-    fetchRoutesFromSearch()
-  }, []);
+  // useEffect(() => {
+  //   fetchRoutesFromSearch();
+  // }, []);
 
   // getCustomReviews(1);
   // getMapsAutocomplete("irvine");

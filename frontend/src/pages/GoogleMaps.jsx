@@ -45,7 +45,7 @@ export const GoogleMaps = (props) => {
       .then((res) => {
         let data = JSON.parse(res.data);
         for (let route of data["routes"]) {
-          props.setRoutes([...props.routes,route]);
+          props.setRoutes([...props.routes, route]);
         }
         console.log(routes);
       })
@@ -101,7 +101,7 @@ export const GoogleMaps = (props) => {
       // Browser doesn't support Geolocation
       throw Error("Error: Your browser doesn't support geolocation.");
     }
-  }
+  };
 
   const goToLocation = (lat, lng) => {
     const pos = {
@@ -114,13 +114,31 @@ export const GoogleMaps = (props) => {
 
   const getRoutePath = (route) => {
     if ("overview_polyline" in route) {
-      console.log(decodePolyline(route["overview_polyline"]))
-      return decodePolyline(route["overview_polyline"])
+      //console.log(decodePolyline(route["overview_polyline"]))
+      return decodePolyline(route["overview_polyline"]);
     } else {
-      console.log([{lat:route["origin_lat"],lng:route["origin_lon"]},{lat:route["destination_lat"],lng:route["destination_lon"]}])
-      return [{lat:route["origin_lat"],lng:route["origin_lon"]},{lat:route["destination_lat"],lng:route["destination_lon"]}]
+      //console.log([{lat:route["origin_lat"],lng:route["origin_lon"]},{lat:route["destination_lat"],lng:route["destination_lon"]}])
+      return [
+        { lat: route["origin_lat"], lng: route["origin_lon"] },
+        { lat: route["destination_lat"], lng: route["destination_lon"] },
+      ];
     }
-  }
+  };
+
+  // if (isLoaded) {
+  //   polylines.forEach(polyline => {
+
+  //   })
+  // props.routes.map((route, index) => {
+  //   setPolylines([
+  //     ...polylines,
+  //     <Polyline
+  //       path={getRoutePath(route)}
+  //       options={{ strokeColor: route.color, strokeWeight: 5 }}
+  //     />,
+  //   ]);
+  // });
+  // }
 
   return isLoaded ? (
     <div>
@@ -157,7 +175,7 @@ export const GoogleMaps = (props) => {
             return (
               <Polyline
                 path={getRoutePath(route)}
-                options={{ strokeColor: "#4285f4", strokeWeight: 5 }}
+                options={{ strokeColor: route.color, strokeWeight: 5 }}
               />
             );
           })}
