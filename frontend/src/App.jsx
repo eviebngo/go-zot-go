@@ -12,12 +12,12 @@ import { GoogleMaps } from "./pages/GoogleMaps";
 
 function App() {
   const [reviews, setReviews] = useState({});
-  const [customRoutes, setCustomRoutes] = useState({});
+  const [routes, setRoutes] = useState({});
 
   // Some test runs of API functions in frontend
-  const getReviews = (routeId) => {
+  const getReviews = (routeIdList) => {
     axios
-      .get(`/api/reviews?id=${routeId}`)
+      .get(`/api/reviews?id_list=${routeIdList}`)
       .then((res) => {
         if (res.data) {
           setReviews(res.data);
@@ -33,12 +33,31 @@ function App() {
       .get(`/api/custom_routes?to_lat=${to_lat}&to_lon=${to_lon}`)
       .then((res) => {
         if (res.data) {
-          setCustomRoutes(res.data);
+          setRoutes([res.data, ...routes]);
         }
       })
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const getAvgRating = (route) => {
+    review_list = reviews.filter((review) => review.routeId == route.id);
+    let sum = 0;
+    let count = 0;
+    review_list.forEach((review) => {
+      sum += review.stars;
+      count++;
+    });
+    return sum / count;
+  };
+
+  const filterRoutes = (filter) => {
+    if (routes.length > 0) {
+      if (filter == "rating") {
+        sorted_list = routes.sort((a, b) => getAvgRating(b) - getAvgRating(a));
+      }
+    }
   };
 
   useEffect(() => {
