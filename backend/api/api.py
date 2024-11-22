@@ -1,6 +1,6 @@
 from fastapi import FastAPI, status, Form
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 
 from typing import TypedDict
 from pathlib import Path
@@ -63,7 +63,7 @@ async def read_custom_routes(to_lat: float, to_lon: float) -> JSONResponse:
 async def post_custom_route(destination_lat: float = Form(), destination_lon: float = Form(), destination: str = Form(), route: list[dict] = Form()) -> JSONResponse:
     date = datetime.now()
     file = json.load(open(custom_routes_path))
-    id = file["custom_routes"][-1]["id"]
+    id = file["custom_routes"][-1]["id"]+1
     new_custom_route = {
         "id": id,
         "origin": "UCI",
@@ -77,7 +77,7 @@ async def post_custom_route(destination_lat: float = Form(), destination_lon: fl
     with open(custom_routes_path, "w") as f:
         json.dump(file,f)
     
-    return JSONResponse({"Success": status.HTTP_200_OK})
+    return RedirectResponse(f'/api/custom_routes?to_lat={destination_lat}&to_lon={destination_lon}', status.HTTP_303_SEE_OTHER)
 
 @app.get("/reviews")
 async def read_reviews(custom: bool, id: str | int) -> JSONResponse:
@@ -94,6 +94,26 @@ async def read_reviews(custom: bool, id: str | int) -> JSONResponse:
         file_list = [review for review in file["reviews"] if review["isCustom"] == custom and review["routeId"] == id]
         return JSONResponse(file_list)
     return JSONResponse({"Error": "File not found"})
+
+@app.post("/reviews")
+async def post_reviews(custom: bool = Form(), id: str| int = Form(), time: str = Form(), stars: float = Form(), comments: str = Form()) -> RedirectResponse:
+    file = json.load(open(reviews_path))
+    review_id = file["reviews"][-1]["id"]+1
+    if id.isdigit():
+        id = int(id)
+    new_review = {
+        "id": review_id,
+        "isCustom": custom,
+        "routeId": id,
+        "stars": stars,
+        "comments": comments,
+        "time": time
+    }
+    file["reviews"].append(new_review)
+    with open(reviews_path, "w") as f:
+        json.dump(file,f)
+    return RedirectResponse(f'/reviews?custom={custom}&id={id}', status.HTTP_303_SEE_OTHER)
+
 
 @app.get("/maps_autocomplete")
 async def get_map_autocomplete(input: str) -> JSONResponse:

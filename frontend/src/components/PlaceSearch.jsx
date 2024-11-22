@@ -18,9 +18,9 @@ export const PlaceSearch = (props) => {
       options={{
         fields: ["name", "formatted_address", "geometry.location"],
         types: ["street_address", "premise", "point_of_interest"],
+        componentRestrictions: { country: ["us"] },
       }}
       onPlaceSelected={(place) => {
-        console.log(place);
         if (map) {
           var latLng = new google.maps.LatLng(
             place.geometry.location.lat(),
