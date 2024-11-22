@@ -82,10 +82,10 @@ export const GoogleMaps = (props) => {
     libraries: ["places"],
   });
 
-  function recenter() {
+  const recenter = (e) => {
     // Try HTML5 geolocation.
     if (navigator.geolocation) {
-      getMapsRoute("Irvine, CA", "Los Angeles, CA", "transit", "");
+      getMapsRoute("33.643,-117.841", "Los Angeles, CA", "transit", "");
       navigator.geolocation.getCurrentPosition((position) => {
         const pos = {
           lat: position.coords.latitude,
@@ -109,6 +109,14 @@ export const GoogleMaps = (props) => {
     setCenter(pos);
     setZoom(13);
   };
+
+  const getRoutePath = (route) => {
+    if ("overview_polyline" in route) {
+      return decodePolyline(route["overview_polyline"])
+    } else {
+      return [{lat:route["origin_lat"],lng:route["origin_lon"]},{lat:route["destination_lat"],lng:route["destination_lon"]}]
+    }
+  }
 
   return isLoaded ? (
     <div>
@@ -141,10 +149,10 @@ export const GoogleMaps = (props) => {
           center={center}
           zoom={zoom}
         >
-          {routes.map((route, index) => {
+          {props.routes.map((route, index) => {
             return (
               <Polyline
-                path={decodePolyline(route["overview_polyline"])}
+                path={getRoutePath(route)}
                 options={{ strokeColor: "#4285f4", strokeWeight: 5 }}
               />
             );

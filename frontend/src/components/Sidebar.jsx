@@ -208,13 +208,14 @@ const Sidebar = (props) => {
 
         {/* Stops with Dropdowns */}
         <div className="suggestions">
-          {[0, 1, 2].map((stop) => (
-            <Route
+          {[0, 1, 2].map((stop) => {
+            if (props.routes.length < stop+1) return <></>
+            return <Route
               key={stop}
               functions={{ activeStop, toggleStop, openReviewModal }}
-              data={props.routes[stop]}
+              data={[ props.routes[stop]["destination"], props.routes[stop],"","" ]} // destination, route, time, notes
             />
-          ))}
+          })}
 
           {routes.map((route, index) => (
             <div key={index} className="stop">

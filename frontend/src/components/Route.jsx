@@ -2,6 +2,10 @@ import React from "react";
 import "./Sidebar.css";
 export const Route = (props) => {
   const calcTotal = (route) => {
+    if (!route) return 0
+    if ("cost" in route) {
+      return route["cost"]
+    }
     let total = 0.0;
     route.forEach((r) => {
       console.log(r);

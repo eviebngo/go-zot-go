@@ -259,7 +259,8 @@ async def get_map_route(origin: str, destination: str, mode: str, departure_time
                     "bounds":route["bounds"],
                     "steps": steps,
                     "duration": readable_duration,
-                    "cost": route["fare"]["text"] if "fare" in route else 0
+                    "cost": route["fare"]["text"] if "fare" in route else 0,
+                    "destination": destination
                 })
         return json.dumps(routes)
     except (urllib.error.URLError, urllib.error.HTTPError, ValueError) as error:

@@ -4,16 +4,16 @@ import Sidebar from "./components/Sidebar";
 import "./App.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
-import { getCustomRoutes } from "./api_functions/routes";
-import { getCustomReviews } from "./api_functions/reviews";
-import { getMapsAutocomplete, getMapsRoute } from "./api_functions/maps";
+// import { getCustomRoutes } from "./api_functions/routes";
+// import { getCustomReviews } from "./api_functions/reviews";
+// import { getMapsAutocomplete, getMapsRoute } from "./api_functions/maps";
 
 import { GoogleMaps } from "./pages/GoogleMaps";
 
 function App() {
   const [reviews, setReviews] = useState([]);
   const [routes, setRoutes] = useState([]);
-  const [loc, setLoc] = useState({ lat: 0, lng: 0 });
+  const [loc, setLoc] = useState({ lat: 34.056365083876415, lng: -118.23400411024693 });
 
   // Some test runs of API functions in frontend
   const getReviews = (routeIdList) => {
@@ -41,7 +41,37 @@ function App() {
       .then((res) => {
         if (res.data) {
           console.log(res.data);
-          setRoutes(res.data);
+          for (let route of res.data) {
+            setRoutes([...routes,route]);
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const getMapsRoute = (origin, destination, mode, departure_time) => {
+    /**
+     * origin: string of valid location from Google Maps autocomplete
+     * destination: same requirements as origin
+     * mode: driving (default), walking, bicycling, transit
+     * arrival_time: string of time in "YYYY-MM-DD-HH-MM-SS" in UTC or "" for now
+     * departure_time: same requirements as arrival_time
+     */
+
+    const parameters = new URLSearchParams({
+      origin: origin,
+      destination: destination,
+      mode: mode,
+      departure_time: departure_time,
+    });
+
+    axios
+      .get(`/api/maps_route?` + parameters.toString())
+      .then((res) => {
+        let data = JSON.parse(res.data);
+        for (let route of data["routes"]) {
+          setRoutes([...routes,route]);
         }
       })
       .catch((error) => {
@@ -68,13 +98,16 @@ function App() {
     }
   };
 
-  const fetchRoutesFromSearch = (e) => {
-    e.preventDefault();
+  const fetchRoutesFromSearch = () => {
+    //e.preventDefault();
     console.log("fetching routes...");
     getCustomRoutes(loc.lat, loc.lng);
+    getMapsRoute("33.643,-117.841",loc.lat+","+loc.lng,"","");
+    console.log(routes)
   };
 
   useEffect(() => {
+    fetchRoutesFromSearch()
     getCustomRoutes(34.056365083876415, -118.23400411024693);
     getReviews([1, 2]);
   }, []);
