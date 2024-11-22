@@ -34,6 +34,7 @@ export const PlaceSearch = (props) => {
           lng: place.geometry.location.lng(),
         });
         props.setDestination(place.name);
+        props.fetchRoutes();
       }}
     />
   ) : (

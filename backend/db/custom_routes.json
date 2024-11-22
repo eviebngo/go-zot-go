@@ -8,6 +8,7 @@
       "origin_lon": -117.83951226813289,
       "destination_lat": 34.056281794151374,
       "destination_lon": -118.23649137502154,
+      "duration":"1 hr 25 min",
       "route": [
         {
           "to": "Tustin Station",
@@ -38,7 +39,7 @@
       "route": ["1"],
       "time": "2024-11-22T04:15:37",
       "cost": 1.0,
-      "duration": "1"
+      "duration": "1 hr"
     }
   ]
 }

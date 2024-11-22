@@ -23,7 +23,7 @@ const Sidebar = (props) => {
   const [formDuration, setFormDuration] = useState("");
 
   const [formFields, setFormFields] = useState([
-    { field: "route1", value: "" },
+    { field: "route1", value: {"to":"","from":"","mode":"","type":"","duration":"","cost":""} },
   ]);
 
   const [reviews, setReviews] = useState({
@@ -68,11 +68,40 @@ const Sidebar = (props) => {
     setFormFields(updatedFields);
   };
 
+  // Handle form input changes to steps
+  const handleStepChange = (index, value, detail) => {
+    if ("end location" in detail) {
+      const updatedFields = [...formFields];
+      updatedFields[index].value.to = value;
+      setFormFields(updatedFields);
+    } else if ("start location" in detail) {
+      const updatedFields = [...formFields];
+      updatedFields[index].value.from = value;
+      setFormFields(updatedFields);
+    } else if ("mode" in detail) {
+      const updatedFields = [...formFields];
+      updatedFields[index].value.mode = value;
+      setFormFields(updatedFields);
+    } else if ("type" in detail) {
+      const updatedFields = [...formFields];
+      updatedFields[index].value.type = value;
+      setFormFields(updatedFields);
+    } else if ("duration" in detail) {
+      const updatedFields = [...formFields];
+      updatedFields[index].value.duration = value;
+      setFormFields(updatedFields);
+    } else if ("cost" in detail) {
+      const updatedFields = [...formFields];
+      updatedFields[index].value.cost = value;
+      setFormFields(updatedFields);
+    }
+  }
+
   // Add a new field
   const handleAddField = () => {
     setFormFields([
       ...formFields,
-      { field: "route" + (formFields.length + 1), value: "" },
+      { field: "route" + (formFields.length + 1), value: {"to":"","from":"","mode":"","type":"","duration":"","cost":""} },
     ]);
   };
 
@@ -161,7 +190,7 @@ const Sidebar = (props) => {
           <button className="menu-btn" onClick={toggleMenu}>
             ☰
           </button>
-          <PlaceSearch setLoc={props.setLoc} setDestination={setDestination} />
+          <PlaceSearch setLoc={props.setLoc} setDestination={setDestination} fetchRoutes={props.fetchRoutes} />
           <button className="secondary-button" onClick={props.fetchRoutes}>
             Go
           </button>
@@ -217,7 +246,7 @@ const Sidebar = (props) => {
                 &times;
               </button>
             </div>
-            <div className="modal-body">
+            <div className="modal-body" style={{overflow:"scroll"}}>
               <p style={{ marginBottom: 10 }}>
                 Fill in route details from UCI to destination
               </p>
@@ -233,13 +262,13 @@ const Sidebar = (props) => {
                     borderRadius: "5px",
                   }}
                 >
-                  <PlaceSearchForm setFormVal={setFormDestination} />
+                  <PlaceSearchForm setFormVal={setFormDestination} placeholder={"Enter a destination"}/>
                 </div>
               </div>
               <div>
                 <input
                   type="number"
-                  placeholder="Enter cost, in dollars"
+                  placeholder="Enter cost in dollars, e.g. 1.21"
                   required
                   style={{
                     marginBottom: "10px",
@@ -256,7 +285,7 @@ const Sidebar = (props) => {
                 />
                 <input
                   type="text"
-                  placeholder="Enter duration"
+                  placeholder="Enter duration, e.g. 1 hr 20 min"
                   required
                   style={{
                     marginBottom: "10px",
@@ -275,11 +304,11 @@ const Sidebar = (props) => {
               {formFields.map((field, index) => (
                 <div
                   key={index}
-                  style={{ display: "flex", marginBottom: "10px" }}
+                  style={{ display: "flex", flexDirection: "column", marginBottom: "10px" }}
                 >
-                  <input
+                  {/* <input
                     type="text"
-                    placeholder="Add a route"
+                    placeholder="Enter step instructions, e.g. Metrolink from Tustin Station to LA Union Station"
                     value={field.value}
                     onChange={(e) => handleInputChange(index, e.target.value)}
                     style={{
@@ -293,7 +322,7 @@ const Sidebar = (props) => {
                     }}
                   />
 
-                  {/* <input
+                  <input
                     type="text"
                     placeholder={
                       field.field === "starting"
@@ -314,22 +343,126 @@ const Sidebar = (props) => {
                       borderRadius: "5px",
                     }}
                   /> */}
-                  {index >= 1 && (
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveField(index)}
+                  <div style={{ display: "flex", flexDirection: "row", marginBottom: "10px" }}>
+                    <p style={{ marginBottom: 10 }}>
+                      Step {index+1}
+                    </p>
+                    {index >= 1 && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveField(index)}
+                        style={{
+                          background: "#ff4b4b",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "5px",
+                          padding: "5px 10px",
+                          cursor: "pointer",
+                          marginLeft: "10px"
+                        }}
+                      >
+                        -
+                      </button>
+                    )}
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", marginLeft: "10px" }}>
+                    <input
+                      type="text"
+                      placeholder="Enter start location"
+                      value={field.value.from}
+                      onChange={(e) => handleStepChange(index, e.target.value, placeholder)}
                       style={{
-                        background: "#ff4b4b",
-                        color: "white",
-                        border: "none",
+                        flex: 1,
+                        marginRight: "10px",
+                        marginBottom: "10px",
+                        background: "white",
+                        color: "black",
+                        border: "1px solid #ccc",
+                        padding: "10px",
                         borderRadius: "5px",
-                        padding: "5px 10px",
-                        cursor: "pointer",
                       }}
-                    >
-                      -
-                    </button>
-                  )}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Enter end location"
+                      value={field.value.to}
+                      onChange={(e) => handleStepChange(index, e.target.value, placeholder)}
+                      style={{
+                        flex: 1,
+                        marginRight: "10px",
+                        marginBottom: "10px",
+                        background: "white",
+                        color: "black",
+                        border: "1px solid #ccc",
+                        padding: "10px",
+                        borderRadius: "5px",
+                      }}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Enter travel mode"
+                      value={field.value.mode}
+                      onChange={(e) => handleStepChange(index, e.target.value, placeholder)}
+                      style={{
+                        flex: 1,
+                        marginRight: "10px",
+                        marginBottom: "10px",
+                        background: "white",
+                        color: "black",
+                        border: "1px solid #ccc",
+                        padding: "10px",
+                        borderRadius: "5px",
+                      }}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Travel mode details"
+                      value={field.value.type}
+                      onChange={(e) => handleStepChange(index, e.target.value, placeholder)}
+                      style={{
+                        flex: 1,
+                        marginRight: "10px",
+                        marginBottom: "10px",
+                        background: "white",
+                        color: "black",
+                        border: "1px solid #ccc",
+                        padding: "10px",
+                        borderRadius: "5px",
+                      }}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Enter duration"
+                      value={field.value.duration}
+                      onChange={(e) => handleStepChange(index, e.target.value, placeholder)}
+                      style={{
+                        flex: 1,
+                        marginRight: "10px",
+                        marginBottom: "10px",
+                        background: "white",
+                        color: "black",
+                        border: "1px solid #ccc",
+                        padding: "10px",
+                        borderRadius: "5px",
+                      }}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Enter cost"
+                      value={field.value.cost}
+                      onChange={(e) => handleStepChange(index, e.target.value, placeholder)}
+                      style={{
+                        flex: 1,
+                        marginRight: "10px",
+                        marginBottom: "10px",
+                        background: "white",
+                        color: "black",
+                        border: "1px solid #ccc",
+                        padding: "10px",
+                        borderRadius: "5px",
+                      }}
+                    />
+                  </div>
                 </div>
               ))}
               <button
@@ -344,7 +477,7 @@ const Sidebar = (props) => {
                   cursor: "pointer",
                 }}
               >
-                + Add Step Instructions
+                + Add Step
               </button>
             </div>
             <div className="modal-footer">
