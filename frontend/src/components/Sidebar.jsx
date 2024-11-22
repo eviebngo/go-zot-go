@@ -146,12 +146,68 @@ const Sidebar = (props) => {
   return (
     <>
       {/* Menu Bar */}
-      {/* <div className={`menu-bar ${menuOpen ? "open" : ""}`}>
+      <div className={`menu-bar ${menuOpen ? "open" : ""}`}>
         <span className="close-menu-btn" onClick={toggleMenu}>
           &times;
         </span>
-        <h2>Transportation Types</h2> */}
-      {/* </div> */}
+        <h2>Transportation Types</h2>
+
+        {/* Walking Icon */}
+        <div
+          className={`menu-item ${
+            selectedIcons.includes("walking") ? "active-icon" : ""
+          }`}
+          onClick={() => toggleIcon("walking")}
+        >
+          <img
+            src="https://img.icons8.com/ios-filled/100/null/walking.png"
+            alt="Walking"
+          />
+          <span className="menu-label">Walking</span>
+        </div>
+
+        {/* Train Icon */}
+        <div
+          className={`menu-item ${
+            selectedIcons.includes("train") ? "active-icon" : ""
+          }`}
+          onClick={() => toggleIcon("train")}
+        >
+          <img
+            src="https://img.icons8.com/ios-filled/100/null/train.png"
+            alt="Train"
+          />
+          <span className="menu-label">Train</span>
+        </div>
+
+        {/* Bus Icon */}
+        <div
+          className={`menu-item ${
+            selectedIcons.includes("bus") ? "active-icon" : ""
+          }`}
+          onClick={() => toggleIcon("bus")}
+        >
+          <img
+            src="https://img.icons8.com/ios-filled/100/null/bus.png"
+            alt="Bus"
+          />
+          <span className="menu-label">Bus</span>
+        </div>
+
+        {/* Car Icon */}
+        <div
+          className={`menu-item ${
+            selectedIcons.includes("car") ? "active-icon" : ""
+          }`}
+          onClick={() => toggleIcon("car")}
+        >
+          <img
+            src="https://img.icons8.com/ios-filled/100/null/car.png"
+            alt="Car"
+          />
+          <span className="menu-label">Car</span>
+        </div>
+      </div>
 
       {/* Sidebar */}
       <div className="sidebar">
