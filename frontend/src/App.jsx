@@ -11,15 +11,21 @@ import { getMapsAutocomplete, getMapsRoute } from "./api_functions/maps";
 import { GoogleMaps } from "./pages/GoogleMaps";
 
 function App() {
-  const [reviews, setReviews] = useState({});
-  const [routes, setRoutes] = useState({});
+  const [reviews, setReviews] = useState([]);
+  const [routes, setRoutes] = useState([]);
 
   // Some test runs of API functions in frontend
   const getReviews = (routeIdList) => {
+    let url = "";
+    routeIdList.forEach((route) => {
+      url += `id_list=${route}`;
+      if (route != routeIdList[routeIdList.length - 1]) url += `&`;
+    });
     axios
-      .get(`/api/reviews?id_list=${routeIdList}`)
+      .get(`/api/reviews?${url}`)
       .then((res) => {
         if (res.data) {
+          console.log(res.data);
           setReviews(res.data);
         }
       })
@@ -33,7 +39,8 @@ function App() {
       .get(`/api/custom_routes?to_lat=${to_lat}&to_lon=${to_lon}`)
       .then((res) => {
         if (res.data) {
-          setRoutes([res.data, ...routes]);
+          console.log(res.data);
+          setRoutes([...res.data, ...routes]);
         }
       })
       .catch((error) => {
@@ -52,17 +59,17 @@ function App() {
     return sum / count;
   };
 
-  const filterRoutes = (filter) => {
+  const sortRoutes = (sort) => {
     if (routes.length > 0) {
-      if (filter == "rating") {
+      if (sort == "rating") {
         sorted_list = routes.sort((a, b) => getAvgRating(b) - getAvgRating(a));
       }
     }
   };
 
   useEffect(() => {
-    getReviews(1);
     getCustomRoutes(34.056365083876415, -118.23400411024693);
+    getReviews([1, 2]);
   }, []);
 
   // getCustomReviews(1);
@@ -70,7 +77,7 @@ function App() {
   // getMapsRoute("Irvine, CA", "Los Angeles, CA", "transit", "", "");
 
   console.log("REVIEWS>>", reviews);
-  console.log("ROUTES>>", customRoutes);
+  console.log("ROUTES>>", routes);
   return (
     <div className="app">
       <div className="map-container">
