@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useRef } from "react";
 import "./Sidebar.css";
-import Autocomplete from "react-google-autocomplete";
+import Autocomplete, {usePlacesWidget} from "react-google-autocomplete";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { useGoogleMap } from "@react-google-maps/api";
 
@@ -11,9 +11,22 @@ export const PlaceSearchForm = (props) => {
     googleMapsApiKey: import.meta.env.VITE_MAPS_API_KEY,
     libraries,
   });
+  const {ref} = usePlacesWidget({
+    apiKey:import.meta.env.VITE_MAPS_API_KEY,
+    onPlaceSelected:(place) => {
+      props.setFormVal(place);
+    }
+  });
 
   return isLoaded ? (
-    <Autocomplete
+    <input
+      ref = {ref}
+      placeholder={props.placeholder}
+      style={{width:"100%",height:"100%"}}
+    />
+    
+  ) : (
+    <>{/*<Autocomplete
       apiKey={import.meta.env.VITE_MAPS_API_KEY}
       options={{
         fields: ["name", "formatted_address", "geometry.location"],
@@ -26,8 +39,7 @@ export const PlaceSearchForm = (props) => {
       style={{
         width: "100%",
       }}
-    />
-  ) : (
-    <></>
+    />*/}</>
+    
   );
 };
