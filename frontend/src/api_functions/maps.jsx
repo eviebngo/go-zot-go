@@ -38,8 +38,8 @@ export const getMapsAutocomplete = (search_query) => {
  * @param {string} origin
  * @param {string} destination
  * @param {string} mode driving (default), walking, bicycling, transit
- * @param {string} arrival_time
- * @param {string} departure_time
+ * @param {string} arrival_time seconds since midnight, January 1, 1970 UTC, or "now"
+ * @param {string} departure_time seconds since midnight, January 1, 1970 UTC, or "now" 
  * @returns {JSON}
  *  overview_polyline (DirectionsPolyline): encoded polyline of all the points on a route
  *  bounds: lat and lng in degrees for northeast and southwest bounds to adjust Google Maps viewbox
@@ -58,6 +58,7 @@ export const getMapsAutocomplete = (search_query) => {
  *    duration (TextValueObject)
  *
  *  Variable types:
+ *  
  *  TextValueObject:
  *      text (string)
  *      value (number)

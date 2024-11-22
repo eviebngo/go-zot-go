@@ -47,8 +47,8 @@ function App() {
   }, []);
 
   // getCustomReviews(1);
-  getMapsAutocomplete("irvine");
-  getMapsRoute("Irvine, CA", "Los Angeles, CA", "transit", "", "");
+  // getMapsAutocomplete("irvine");
+  // getMapsRoute("Irvine, CA", "Los Angeles, CA", "transit", "", "");
 
   console.log("REVIEWS>>", reviews);
   console.log("ROUTES>>", customRoutes);

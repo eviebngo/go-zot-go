@@ -44,7 +44,7 @@ export const GoogleMaps = (props) => {
         .then((res) => {
             let data = JSON.parse(res.data)
             setRoutes(data["routes"])
-            //console.log(routes)
+            console.log(routes)
         })
         .catch((error) => {
             console.log(error)
@@ -85,6 +85,7 @@ export const GoogleMaps = (props) => {
   function recenter() {
     // Try HTML5 geolocation.
     if (navigator.geolocation) {
+      getMapsRoute("Irvine, CA", "Los Angeles, CA", "transit", "", "");
       navigator.geolocation.getCurrentPosition((position) => {
         const pos = {
           lat: position.coords.latitude,
