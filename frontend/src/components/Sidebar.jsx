@@ -257,17 +257,35 @@ const Sidebar = (props) => {
 
         {/* Filter and Add New Buttons */}
         <div className="action-buttons">
-          {/* <button
+          <button
             className="filter-btn"
             onClick={() => setFiltersOpen(!filtersOpen)}
           >
             Filters
-          </button> */}
+          </button>
 
           <button className="popup-btn" onClick={() => setModalOpen(true)}>
             Add New
           </button>
         </div>
+
+          {/* Filter Dropdown */}
+          {filtersOpen && (
+          <div className="filter-dropdown">
+            <label>
+              <input type="checkbox" />
+              Price
+            </label>
+            <label>
+              <input type="checkbox" />
+              Rating
+            </label>
+            <label>
+              <input type="checkbox" />
+              Distance
+            </label>
+          </div>
+        )}
 
         {/* Stops with Dropdowns */}
         <div className="suggestions">
