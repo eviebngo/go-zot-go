@@ -149,7 +149,11 @@ export const GoogleMaps = (props) => {
               />
             );
           })}
-          <Sidebar setLoc={props.setLoc} fetchRoutes={props.fetchRoutes} />
+          <Sidebar
+            setLoc={props.setLoc}
+            fetchRoutes={props.fetchRoutes}
+            routes={props.routes}
+          />
         </GoogleMap>
       </div>
     </div>

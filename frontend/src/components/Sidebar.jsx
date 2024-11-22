@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import "./Sidebar.css";
 import "@fortawesome/fontawesome-free/css/all.css";
+import { Route } from "./Route";
 
-const Sidebar = () => {
+const Sidebar = (props) => {
   const [activeStop, setActiveStop] = useState(null); // For stops
   const [menuOpen, setMenuOpen] = useState(false); // State for the menu
   const [selectedIcons, setSelectedIcons] = useState([]); // For multiple active transportation icons
@@ -207,27 +208,12 @@ const Sidebar = () => {
 
         {/* Stops with Dropdowns */}
         <div className="suggestions">
-          {[1, 2, 3].map((stop) => (
-            <div key={stop} className="stop">
-              <button
-                className={`suggestion ${activeStop === stop ? "active" : ""}`}
-                onClick={() => toggleStop(stop)}
-              >
-                Stop {stop}
-              </button>
-              {activeStop === stop && (
-                <div className="stop-content dropdown">
-                  <p>Details about Stop {stop}...</p>
-                  <p>Additional info for Stop {stop}.</p>
-                  <button
-                    className="review-btn"
-                    onClick={() => openReviewModal(stop)}
-                  >
-                    <i className="fa-regular fa-comments"></i> View Reviews
-                  </button>
-                </div>
-              )}
-            </div>
+          {[0, 1, 2].map((stop) => (
+            <Route
+              key={stop}
+              functions={{ activeStop, toggleStop, openReviewModal }}
+              data={props.routes[stop]}
+            />
           ))}
 
           {routes.map((route, index) => (
@@ -250,7 +236,10 @@ const Sidebar = () => {
             </div>
             <div className="modal-body">
               {formFields.map((field, index) => (
-                <div key={index} style={{ display: "flex", marginBottom: "10px" }}>
+                <div
+                  key={index}
+                  style={{ display: "flex", marginBottom: "10px" }}
+                >
                   <input
                     type="text"
                     placeholder={
@@ -357,7 +346,9 @@ const Sidebar = () => {
                     paddingBottom: "10px",
                   }}
                 >
-                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                  >
                     <strong>{review.name}</strong>
                     <span>
                       {"★".repeat(review.rating)}

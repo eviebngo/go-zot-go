@@ -6,7 +6,7 @@
   width: 800px; /* Adjust to your desired width */
   max-width: 800px; /* Prevent it from expanding */
   min-width: 200px; /* Allow for flexibility */
-  color: #0C2340;
+  color: #0c2340;
 }
 
 /* Search Bar */
@@ -16,13 +16,12 @@
   gap: 10px; /* Add space between menu button and search bar */
   margin-bottom: 20px; /* Spacing below the search bar */
   width: 700px;
-  
 }
 
 .menu-btn {
   font-size: 5rem; /* Icon size */
   background: none; /* Remove default button styling */
-  color: #0064A4;
+  color: #0064a4;
   border: none;
   cursor: pointer;
   padding: 8px; /* Add padding for better clickability */
@@ -36,7 +35,6 @@
   border: 1px solid #ccc;
   margin-top: 20px;
   background-color: #ffffff !important; /* Enforce white background */
-  
 }
 
 /* Suggestions */
@@ -44,7 +42,7 @@
 .suggestion {
   display: flex;
   width: 90%; /* Make the button smaller than the full sidebar width */
-  padding: 50px; /* Padding for better clickability */
+  padding: 30px; /* Padding for better clickability */
   font-size: 1.2rem; /* Font size for readability */
   text-align: left; /* Align text to the left */
   border: 1px solid #ccc; /* Light border for better definition */
@@ -54,6 +52,12 @@
   transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effects */
   margin: 0 auto; /* Center the button horizontally */
   margin-bottom: 20px;
+  font-weight: 800;
+}
+
+.suggestion p {
+  font-size: 0.8rem;
+  font-weight: 300;
 }
 
 .suggestion:hover {
@@ -62,7 +66,7 @@
 }
 
 .suggestion.active {
-  background-color: #0064A4; /* Blue background for active state */
+  background-color: #0064a4; /* Blue background for active state */
   color: white; /* White text for contrast */
   transform: scale(1.05); /* Slightly larger size for active state */
 }
@@ -75,7 +79,7 @@
   border-radius: 10px;
   border: 1px solid #ccc;
   font-size: 0.9rem;
-  color: #0064A4;
+  color: #0064a4;
   width: 90%; /* Match button width */
   margin: 0 auto; /* Center the dropdown content */
   animation: dropdown 0.3s ease-out;
@@ -106,7 +110,7 @@
   padding: 50px;
   z-index: 900; /* Ensure it stays behind the menu button */
   transition: left 0.3s ease;
-  color: #0C2340;
+  color: #0c2340;
 }
 
 .menu-bar.open {
@@ -131,8 +135,8 @@
   width: 100px;
   height: 100px;
   cursor: pointer;
-  border: 2px solid #0C2340;
-  border-radius: 8px; 
+  border: 2px solid #0c2340;
+  border-radius: 8px;
   transition: transform 0.3s, background-color 0.3s; /* Smooth effects */
   padding-top: 10px;
   padding: 20px;
@@ -233,7 +237,6 @@
   color: #0c2340; /* Text color */
 }
 
-
 /* Modal Overlay */
 /* Modal Overlay */
 .modal-overlay {
@@ -251,7 +254,7 @@
 /* Modal Content */
 .modal-content {
   background: white !important; /* White background */
-  border: 2px solid #0064A4 !important; /* Border with desired color */
+  border: 2px solid #0064a4 !important; /* Border with desired color */
   border-radius: 10px !important; /* Smooth rounded corners */
   width: 600px !important; /* Fixed width */
   height: 600px !important; /* Match height to width to make it square */
@@ -263,7 +266,7 @@
   position: relative !important; /* Position relative for close button */
   z-index: 1010 !important; /* Ensure it appears above the overlay */
   display: flex !important; /* Flexbox for centering content */
-  flex-direction : column !important; /* Stack header, body, footer vertically */
+  flex-direction: column !important; /* Stack header, body, footer vertically */
   justify-content: space-between !important; /* Distribute content evenly */
 }
 
