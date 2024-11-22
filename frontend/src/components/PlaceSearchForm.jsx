@@ -5,7 +5,6 @@ import { useJsApiLoader } from "@react-google-maps/api";
 import { useGoogleMap } from "@react-google-maps/api";
 
 export const PlaceSearchForm = (props) => {
-  console.log(props);
   const libraries = ["places"];
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_MAPS_API_KEY,
@@ -14,19 +13,22 @@ export const PlaceSearchForm = (props) => {
   const {ref} = usePlacesWidget({
     apiKey:import.meta.env.VITE_MAPS_API_KEY,
     onPlaceSelected:(place) => {
-      props.setFormVal(place);
+      console.log("PROPS>>",props)
+      if (props.index) {
+        props.setFormVal(props.index,place,props.placeholder)
+      } else {
+        props.setFormVal(place);
+      }
+    },
+    options:{
+      fields: ["name", "formatted_address", "geometry.location"],
+      types: ["street_address", "premise", "point_of_interest"],
+      componentRestrictions: { country: ["us"] },
     }
   });
 
   return isLoaded ? (
-    <input
-      ref = {ref}
-      placeholder={props.placeholder}
-      style={{width:"100%",height:"100%"}}
-    />
-    
-  ) : (
-    <>{/*<Autocomplete
+    <Autocomplete
       apiKey={import.meta.env.VITE_MAPS_API_KEY}
       options={{
         fields: ["name", "formatted_address", "geometry.location"],
@@ -39,6 +41,15 @@ export const PlaceSearchForm = (props) => {
       style={{
         width: "100%",
       }}
+    />
+    
+  ) : (
+    <>{/*<input
+      ref = {ref}
+      placeholder={props.placeholder}
+      style={{width: "100%",
+        height:"100%"}}
+      onChange={(e) => props.setFormVal(props.index, e.target.value, props.placeholder)}
     />*/}</>
     
   );

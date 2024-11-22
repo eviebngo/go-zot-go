@@ -57,15 +57,18 @@ async def read_custom_routes(to_lat: float, to_lon: float) -> JSONResponse:
     if custom_routes_path.exists():
         file = json.load(open(custom_routes_path))
         file_list = [route for route in file["custom_routes"] if distance.distance((to_lat, to_lon), (route["destination_lat"], route["destination_lon"])).miles <= 0.5]
+        print(file_list)
         return JSONResponse(file_list)
     return JSONResponse({"Error": "File not found"})
 
 
 @app.post("/custom_routes")
-async def post_custom_route(destination_lat: float = Form(), destination_lon: float = Form(), destination: str = Form(), route: list[str] = Form(), cost: float = Form(), duration: str = Form()) -> JSONResponse:
+async def post_custom_route(destination_lat: float = Form(), destination_lon: float = Form(), destination: str = Form(), route: list = Form(), cost: float = Form(), duration: str = Form()) -> JSONResponse:
     date = datetime.now()
     file = json.load(open(custom_routes_path))
     id = file["custom_routes"][-1]["id"]+1
+    for i in range(len(route)):
+        route[i] = json.loads(route[i])["value"]
     new_custom_route = {
         "id": id,
         "origin": "UCI",
@@ -78,6 +81,7 @@ async def post_custom_route(destination_lat: float = Form(), destination_lon: fl
         "duration": duration
     }
     file["custom_routes"].append(new_custom_route)
+    print(file["custom_routes"])
     with open(custom_routes_path, "w") as f:
         json.dump(file,f)
     
@@ -207,7 +211,6 @@ async def get_map_route(origin: str, destination: str, mode: str, departure_time
                 duration = 0 # in seconds
                 for leg in route["legs"]:
                     for step in leg["steps"]:
-                        print(step)
                         org = None
                         line = None
 

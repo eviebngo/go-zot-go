@@ -38,7 +38,7 @@ export const Route = (props) => {
               route.map((r) => {
                 return (
                   <p style={{ margin: 10 }}>
-                    <strong>{r.from}</strong> &rarr; <strong>{r.to}</strong>:{" "}
+                    <strong>{r.from}</strong> &rarr; <strong>{r.to}</strong>{" "}
                     {r.duration}
                   </p>
                 );

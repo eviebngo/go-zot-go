@@ -156,7 +156,7 @@ function App() {
   const fetchRoutesFromSearch = () => {
     //e.preventDefault();
     console.log("fetching routes...");
-    setRoutes([]);
+    //setRoutes([]);
     // getCustomRoutes(loc.lat, loc.lng);
     // getMapsRoute("33.643,-117.841", loc.lat + "," + loc.lng, "", "");
     getAllRoutes(
